@@ -1,4 +1,4 @@
-import { getResponse } from "../openai";
+import { getResponse } from "../src/openai";
 
 export default defineEventHandler(async (event) => {
     var body = await readBody(event);
