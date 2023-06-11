@@ -14,4 +14,13 @@ export default defineNuxtConfig({
 			))
 		},
 	],
+	runtimeConfig: {
+		// The private keys which are only available within server-side
+		openaiApiKey: process.env.OPENAI_API_KEY,
+		openaiOrgId: process.env.OPENAI_ORG_ID,
+		// Keys within public, will be also exposed to the client-side
+		public: {
+			// apiBase: '/api'
+		}
+	}
 })
