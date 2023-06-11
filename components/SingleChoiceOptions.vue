@@ -13,10 +13,15 @@
 
 <script setup>
 const props = defineProps(['id', 'q']);
+defineExpose({ reset });
 const selectedOption = ref(null);
 
 function indexToLetter(index) {
     return String.fromCharCode(65 + index);
+}
+
+function reset() {
+    selectedOption.value = null;
 }
 
 function isSelected(index) {
