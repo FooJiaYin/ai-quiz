@@ -1,8 +1,6 @@
 <template>
     <v-list-item :title="title" :value="link" :to="link" class="text-white text-decoration-none">
-        <!-- <NuxtLink :to="link"> -->
-            <slot></slot>
-        <!-- </NuxtLink> -->
+        <slot></slot>
     </v-list-item>
 </template>
 
