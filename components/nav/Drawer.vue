@@ -2,8 +2,8 @@
     <v-navigation-drawer class="bg-indigo-darken-1" permanent theme="dark">
         <v-list nav>
             <NavLink link="/" title="+ Add Quiz"></NavLink>
-            <NavLink link="/main-points" title="Main Points"></NavLink>
-            <NavLink link="/single-choice" title="Single Choice Quiz"></NavLink>
+            <NavLink v-if="quiz.mainPoints.length > 0" link="/main-points" title="Main Points"></NavLink>
+            <NavLink  v-if="quiz.questions.length > 0" link="/single-choice" title="Single Choice Quiz"></NavLink>
         </v-list>
     </v-navigation-drawer>
 </template>
@@ -14,3 +14,7 @@
     transition-duration: 0s !important;
 }
 </style>
+
+<script setup>
+const quiz = useQuiz();
+</script>
