@@ -7,8 +7,9 @@
 <script setup>
 const quiz = useQuiz();
 const input = ref("");
+const language = ref("en-us");
 
-function generateQuiz() {
-    quiz.generateQuiz(input.value);
+async function generateQuiz() {
+    await quiz.generateQuiz(input.value, language.value);
 }
 </script>
