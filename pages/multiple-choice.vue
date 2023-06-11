@@ -1,6 +1,6 @@
 <template>
-    <div v-for="(q, index) in quiz.questions">
-        <h3>{{ q.question }}</h3>
+    <div v-for="(q, index) in quiz.questions" class="my-16">
+        <div class="mb-4">{{ index + 1 }}. {{ q.question }}</div>
         <MultipleChoiceOptions :q="q" :id="index" ref="options" />
     </div>
     <CenterButton @click="reset">Try Again</CenterButton>
