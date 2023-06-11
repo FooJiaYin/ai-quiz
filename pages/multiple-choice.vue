@@ -1,7 +1,7 @@
 <template>
     <div v-for="(q, index) in quiz.questions">
         <h3>{{ q.question }}</h3>
-        <SingleChoiceOptions :q="q" :id="index" ref="options" />
+        <MultipleChoiceOptions :q="q" :id="index" ref="options" />
     </div>
     <CenterButton @click="reset">Try Again</CenterButton>
 </template>

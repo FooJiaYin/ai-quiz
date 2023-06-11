@@ -1,7 +1,7 @@
 <template>
     <v-item-group v-model="selectedOption">
         <v-item v-for="(option, index) in q.options" :key="index">
-            <v-card :class="['d-flex align-center mb-3 pa-3', isSelected(index)]" dark max-width="400"
+            <v-card :class="['d-flex align-center mb-3 pa-3', isSelected(index)]" dark max-width="500"
                 @click="selectOption(index)">
                 <div class="flex-grow-1">
                     {{ option }}
