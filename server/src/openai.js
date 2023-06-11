@@ -16,17 +16,21 @@ export async function getResponse({
     model = "gpt-3.5-turbo",
     ...props
 }) {
-    console.log(props)
-    const completion = await openai.createChatCompletion({
-        ...props,
-        model: model,
-        messages: props.messages || [{ role: "user", content: prompt }],
-    });
-    const response = {
-        response: completion.data.choices[0].message.content,
-        usage: completion.data.usage
+    try {
+        const completion = await openai.createChatCompletion({
+            ...props,
+            model: model,
+            messages: props.messages || [{ role: "user", content: prompt }],
+        });
+        const response = {
+            response: completion.data.choices[0].message.content,
+            usage: completion.data.usage
+        };
+        return response;
+    } catch (e) {
+        console.log(e);
+        return { error: e };
     }
-    return response
 }
 
 export default openai;
