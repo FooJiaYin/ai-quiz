@@ -12,6 +12,8 @@ export const useQuiz = defineStore('quiz', {
 		// since we rely on `this`, we cannot use an arrow function
 		async generateQuiz(input, language) {
 			this.transcript = input;
+			this.questions = [];
+			this.mainPoints = [];
 			try {
 				const res = await $fetch('/api/quiz', {
 					method: 'POST', body: {
