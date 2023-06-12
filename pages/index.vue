@@ -3,7 +3,7 @@
     <v-textarea label="Insert transcript here" v-model="input" variant="outlined" rows="20" clearable></v-textarea>
     <v-text-field label="Language" v-model="language" variant="outlined"></v-text-field>
     <CenterButton @click="generateQuiz">Generate Quiz</CenterButton>
-    <p>{{ quiz.status }}</p>
+    <p :class="`mt-3 text-center `+statusColor">{{ quiz.status }}</p>
 </template>
 
 <script setup>
@@ -11,10 +11,13 @@ const quiz = useQuiz();
 const input = ref(quiz.transcript);
 const language = ref("");
 const status = ref("");
+const statusColor = computed(() =>
+    quiz.status === "Completed!" ? "text-success" : 
+    quiz.status === "Error" ? "text-error" : 
+    "black"
+);
 
 async function generateQuiz() {
-    status.value = "Loading...";
     await quiz.generateQuiz(input.value, language.value);
-    status.value = "Complete!";
 }
 </script>
