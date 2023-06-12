@@ -20,7 +20,7 @@ export async function getResponse({
         const completion = await openai.createChatCompletion({
             ...props,
             model: model,
-            messages: props.messages || [{ role: "user", content: prompt }],
+            messages: props.messages ?? [{ role: "user", content: prompt }],
         });
         const response = {
             response: completion.data.choices[0].message.content,
