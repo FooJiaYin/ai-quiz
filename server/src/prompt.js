@@ -8,10 +8,10 @@ export function QG_prompt(language) {
     `;
 }
 
-export function mainpoints_prompt(language, passage) {
+export function mainpoints_prompt(language, passage, n) {
     return `
         ${passage}
 
-        list the main points in this passage in language: ${language} 
+        list ${n ?? ''} main points in this passage in language: ${language} 
     `;
 }
