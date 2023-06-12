@@ -4,6 +4,7 @@ export const useQuiz = defineStore('quiz', {
 	state: () => {
 		return {
 			transcript: '',
+			status: '',
 			questions: [],
 			mainPoints: [],
 		};
@@ -14,6 +15,7 @@ export const useQuiz = defineStore('quiz', {
 			this.transcript = input;
 			this.questions = [];
 			this.mainPoints = [];
+			this.status = 'Loading...';
 			try {
 				let res = await $fetch('/api/quiz', {
 					method: 'POST', body: {
@@ -27,8 +29,10 @@ export const useQuiz = defineStore('quiz', {
 					}
 				});
 				this.questions = res;
+				this.status = 'Completed!';
 			} catch (error) {
 				console.error(error);
+				this.status = 'Error';
 			}
 		},
 	},

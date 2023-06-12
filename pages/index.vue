@@ -3,7 +3,7 @@
     <v-textarea label="Insert transcript here" v-model="input" variant="outlined" rows="20" clearable></v-textarea>
     <v-text-field label="Language" v-model="language" variant="outlined"></v-text-field>
     <CenterButton @click="generateQuiz">Generate Quiz</CenterButton>
-    <p>{{ status }}</p>
+    <p>{{ quiz.status }}</p>
 </template>
 
 <script setup>
