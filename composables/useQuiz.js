@@ -15,13 +15,18 @@ export const useQuiz = defineStore('quiz', {
 			this.questions = [];
 			this.mainPoints = [];
 			try {
-				const res = await $fetch('/api/quiz', {
+				let res = await $fetch('/api/quiz', {
 					method: 'POST', body: {
-						input, language
+						input, language, task: 'mainpoints'
 					}
 				});
-				this.questions = res.questions;
 				this.mainPoints = res.mainPoints;
+				res = await $fetch('/api/quiz', {
+					method: 'POST', body: {
+						input: res.msg, language, task: 'MC'
+					}
+				});
+				this.questions = res;
 			} catch (error) {
 				console.error(error);
 			}
