@@ -95,4 +95,4 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 
 Note: Please make sure your deployment platform has sufficient timeout limit for the quiz generation API call. 
 
-For example, Free plan of [Vercel](https://vercel.com/) and [Netlify](https://www.netlify.com/) are **not recommended** for this project as they have a 10s timeout limit for serverless functions. The quiz generation process may take longer than 10s. 
+For example, free plan of [Vercel](https://vercel.com/) and [Netlify](https://www.netlify.com/) are **not recommended** for this project as they have a 10s timeout limit for serverless functions. The quiz generation process may take longer than 10s. 
