@@ -48,18 +48,24 @@ async function getQuestions(input, language = "en-us", task = "MC") {
 }
 
 function processQuestions(questions) {
-    questions = JSON.parse(questions);
-    let result = [];
-    for (let q of questions) {
-        let options = q.slice(1);
-        let answer = options[0];
-        // Shuffle options
-        options = options.sort(() => Math.random() - 0.5);
-        result.push({
-            "question": q[0],
-            "options": options,
-            "answerId": options.indexOf(answer)
-        });
+    try {
+        questions = JSON.parse(questions);
+        let result = [];
+        for (let q of questions) {
+            let options = q.slice(1);
+            let answer = options[0];
+            // Shuffle options
+            options = options.sort(() => Math.random() - 0.5);
+            result.push({
+                "question": q[0],
+                "options": options,
+                "answerId": options.indexOf(answer)
+            });
+        }
+        return result;
+    } catch (error) {
+        // Handle the error
+        console.error('Error parsing JSON:', error.message);
+        console.error(questions);
     }
-    return result;
 }
