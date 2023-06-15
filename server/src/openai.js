@@ -1,4 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
+import defaultConfig from "./config";
 
 const runtimeConfig = useRuntimeConfig();
 const { openaiApiKey, openaiOrgId } = runtimeConfig;
@@ -12,15 +13,18 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export async function getResponse({
-    prompt = "say hello",
-    model = "gpt-3.5-turbo",
+    prompt = "",
+    messages = [],
     ...props
 }) {
+    if (prompt.length > 0) {
+        messages.push({ role: "user", content: prompt });
+    }
     try {
         const completion = await openai.createChatCompletion({
+            ...defaultConfig,
             ...props,
-            model: model,
-            messages: props.messages ?? [{ role: "user", content: prompt }],
+            messages: messages,
         });
         const response = {
             response: completion.data.choices[0].message.content,
@@ -28,7 +32,7 @@ export async function getResponse({
         };
         return response;
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return { error: e };
     }
 }

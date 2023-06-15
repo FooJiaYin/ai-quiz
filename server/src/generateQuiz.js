@@ -5,12 +5,12 @@ export async function generateQuiz(input, language = "en-us", task) {
     if (input.length > 1500) {
         input = input.slice(0, 1500);
     }
-    
+
     if (task === "mainpoints") {
         return await getMainPoints(input, language);
     } else {
         const response = await getQuestions(input, language, task);
-        return processQuestions(response)
+        return processQuestions(response);
     }
 }
 
@@ -20,11 +20,7 @@ async function getMainPoints(input, language = "en-us") {
     let msg = [{ "role": "system", "content": req }];
     let res = await getResponse({
         messages: msg,
-        temperature: 0.0,
         max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0
     });
     const mainPoints = res.response;
     msg.push({ "role": "assistant", "content": mainPoints });
@@ -37,12 +33,7 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     const req = QG_prompt(language);
     msg.push({ "role": "user", "content": req });
     const res = await getResponse({
-        messages: msg,
-        temperature: 0.0,
-        max_tokens: 1000,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0
+        messages: msg
     });
     return res.response;
 }
