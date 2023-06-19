@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 
-const tasks = ['mainpoints', 'MC'];
+const tasks = ['mainpoints', 'MC', 'TF'];
 
 export const useQuiz = defineStore('quiz', {
 	state: () => {
@@ -8,7 +8,8 @@ export const useQuiz = defineStore('quiz', {
 			status: '',
 			transcript: '',
 			mainpoints: '',
-			MC: []
+			MC: [],
+			TF: []
 		};
 	},
 	actions: {
