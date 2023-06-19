@@ -11,7 +11,7 @@ export async function generateQuiz(input, language = "en-us", task) {
         return await getMainpoints(input, language);
     } else {
         const response = await getQuestions(input, language, task);
-        const res = processQuestions(response);
+        const res = processQuestions(response, task);
         return res;
     }
 }
@@ -34,7 +34,6 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     let msg = input;
     const callbackFunction = getFunctions(task);
     const req = QGPrompt(language, task);
-    msg.push({ "role": "user", "content": req });
     const res = await getResponse({
         messages: msg,
         functions: [callbackFunction],
@@ -43,17 +42,25 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     return res.function_call.arguments.result;
 }
 
-function processQuestions(questions) {
+function processQuestions(questions, task) {
     try {
         let result = [];
         for (let { question, options, answer } of questions) {
-            // Shuffle options
-            options = options.sort(() => Math.random() - 0.5);
-            result.push({
-                question,
-                "options": options,
-                "answerId": options.indexOf(answer)
-            });
+            if (task === "MC") {
+                // Shuffle options
+                options = options.sort(() => Math.random() - 0.5);
+                result.push({
+                    question,
+                    "options": options,
+                    "answerId": options.indexOf(answer)
+                });
+            } else if (task === "TF") {
+                result.push({
+                    question,
+                    "options": ["True", "False"],
+                    "answerId": answer === "True" ? 0 : 1
+                });
+            }
         }
         return { result };
     } catch (error) {
