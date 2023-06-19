@@ -15,7 +15,7 @@ const openai = new OpenAIApi(configuration);
 export async function getResponse({
     prompt = "",
     messages = [],
-    ...props
+    ...request
 }) {
     if (prompt.length > 0) {
         messages.push({ role: "user", content: prompt });
@@ -23,7 +23,7 @@ export async function getResponse({
     try {
         const completion = await openai.createChatCompletion({
             ...defaultParams,
-            ...props,
+            ...request,
             messages: messages,
         });
         const response = {
