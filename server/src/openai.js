@@ -1,5 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
-import { functions } from "./functions";
+// import { functions } from "./functions";
 import defaultParams from "./config";
 
 const runtimeConfig = useRuntimeConfig();
@@ -49,7 +49,7 @@ export async function getResponse({
                     ...message.function_call,
                     arguments: JSON.parse(message.function_call.arguments),
                 };
-                response = await handleFunctionCall(response, request);
+                // response = await handleFunctionCall(response, request);
             } catch (e) {
                 return {
                     error: "Error parsing function call arguments",

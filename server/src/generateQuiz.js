@@ -1,5 +1,6 @@
 import { getResponse } from "./openai";
 import { mainpointsPrompt, QGPrompt } from "./prompt.js";
+import { getFunctions } from "./functions.js";
 
 export async function generateQuiz(input, language = "en-us", task) {
     if (input.length > 1500) {
@@ -10,7 +11,8 @@ export async function generateQuiz(input, language = "en-us", task) {
         return await getMainPoints(input, language);
     } else {
         const response = await getQuestions(input, language, task);
-        return processQuestions(response);
+        const res = processQuestions(response);
+        return res;
     }
 }
 
@@ -22,7 +24,7 @@ async function getMainPoints(input, language = "en-us") {
         messages: msg,
         max_tokens: 256,
     });
-    const mainPoints = res.response;
+    const mainPoints = res.content;
     msg.push({ "role": "assistant", "content": mainPoints });
     return { mainPoints, msg };
 }
@@ -30,25 +32,25 @@ async function getMainPoints(input, language = "en-us") {
 async function getQuestions(input, language = "en-us", task = "MC") {
     // Get questions
     let msg = input;
+    const callbackFunction = getFunctions(task);
     const req = QGPrompt(language, task);
     msg.push({ "role": "user", "content": req });
     const res = await getResponse({
-        messages: msg
+        messages: msg,
+        functions: [callbackFunction],
+        function_call: { "name": callbackFunction["name"] },
     });
-    return res.response;
+    return res.function_call.arguments.result;
 }
 
 function processQuestions(questions) {
     try {
-        questions = JSON.parse(questions);
         let result = [];
-        for (let q of questions) {
-            let options = q.slice(1);
-            let answer = options[0];
+        for (let { question, options, answer } of questions) {
             // Shuffle options
             options = options.sort(() => Math.random() - 0.5);
             result.push({
-                "question": q[0],
+                question,
                 "options": options,
                 "answerId": options.indexOf(answer)
             });
@@ -56,7 +58,7 @@ function processQuestions(questions) {
         return result;
     } catch (error) {
         // Handle the error
-        console.error('Error parsing JSON:', error.message);
         console.error(questions);
+        return { error: error.message };
     }
 }
