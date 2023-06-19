@@ -1,4 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
+import { functions } from "./functions";
 import defaultParams from "./config";
 
 const runtimeConfig = useRuntimeConfig();
@@ -35,15 +36,54 @@ export async function getResponse({
             ...request,
             messages: messages,
         });
-        const response = {
-            response: completion.data.choices[0].message.content,
-            usage: completion.data.usage
+        const message = completion.data.choices[0].message;
+        let response = {
+            content: message.content,
+            usage: completion.data.usage,
+            messages: [...messages, message],
         };
+
+        if (message.function_call) {
+            response["function_call"] = {
+                ...message.function_call,
+                arguments: JSON.parse(message.function_call.arguments),
+            };
+            response = await handleFunctionCall(response, request);
+        }
         return response;
     } catch (e) {
         console.error(e);
         return { error: e };
     }
+}
+
+/** Recursively handle function calls in the response */
+async function handleFunctionCall(response, request) {
+    const args = response.function_call.arguments;
+    const name = response.function_call.name;
+
+    let result;
+    // Call the function if it is a server-side function
+    if (name in functions && functions[name].function) 
+        result = functions[name].function(args);
+    if (result instanceof Promise) result = await result;
+
+    // If the function will callback, send the result to OpenAI API
+    if (functions[name].willCallback) {
+        const messages = [
+            ...response.messages,
+            { role: "function", "content": JSON.stringify(result), "name": response.function_call.name }
+        ];
+        response = await getResponse({
+            ...request,
+            prompt: "",
+            messages: messages,
+        });
+        if (response.function_call) {
+            return await handleFunctionCall(response, request);
+        }
+    }
+    return response;
 }
 
 export default openai;

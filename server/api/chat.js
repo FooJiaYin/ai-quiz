@@ -1,11 +1,17 @@
 import { getResponse } from "../src/openai";
+import { functionsInfo } from "../src/functions";
 
 export default defineEventHandler(async (event) => {
-    var body = await readBody(event);
-    if (typeof body === "string") {
-        body = { prompt: body };
+    var request = await readBody(event);
+    if (typeof request === "string") {
+        request = { prompt: request };
     }
-    body.prompt ??= "say hi";
-    const { response } = await getResponse(body);
+    request = {
+        prompt: "say hi",
+        functions: functionsInfo,
+        function_call: "auto",
+        ...request
+    };
+    let response = await getResponse(request);
     return response;
 });
