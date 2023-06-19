@@ -44,11 +44,18 @@ export async function getResponse({
         };
 
         if (message.function_call) {
-            response["function_call"] = {
-                ...message.function_call,
-                arguments: JSON.parse(message.function_call.arguments),
-            };
-            response = await handleFunctionCall(response, request);
+            try {
+                response["function_call"] = {
+                    ...message.function_call,
+                    arguments: JSON.parse(message.function_call.arguments),
+                };
+                response = await handleFunctionCall(response, request);
+            } catch (e) {
+                return {
+                    error: "Error parsing function call arguments",
+                    ...response,
+                };
+            }
         }
         return response;
     } catch (e) {
