@@ -1,5 +1,5 @@
 import { getResponse } from "./openai";
-import { mainpoints_prompt, QG_prompt } from "./prompt.js";
+import { mainpointsPrompt, QGPrompt } from "./prompt.js";
 
 export async function generateQuiz(input, language = "en-us", task) {
     if (input.length > 1500) {
@@ -16,7 +16,7 @@ export async function generateQuiz(input, language = "en-us", task) {
 
 async function getMainPoints(input, language = "en-us") {
     // Get main points
-    let req = mainpoints_prompt(language, input);
+    let req = mainpointsPrompt(language, input);
     let msg = [{ "role": "system", "content": req }];
     let res = await getResponse({
         messages: msg,
@@ -30,7 +30,7 @@ async function getMainPoints(input, language = "en-us") {
 async function getQuestions(input, language = "en-us", task = "MC") {
     // Get questions
     let msg = input;
-    const req = QG_prompt(language);
+    const req = QGPrompt(language, task);
     msg.push({ "role": "user", "content": req });
     const res = await getResponse({
         messages: msg

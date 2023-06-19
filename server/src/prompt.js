@@ -1,6 +1,6 @@
 import schema from "./schema.js";
 
-export function QG_prompt(language) {
+export function QGPrompt(language) {
     return `
         give me a quiz for this passage in language:${language} 
         the quiz includes one question and 4 answer candidates for each main point above, and these questions should be answerable with this passage instead of the external knowledge. The first candidate must be the correct answer.
@@ -8,7 +8,7 @@ export function QG_prompt(language) {
     `;
 }
 
-export function mainpoints_prompt(language, passage, n) {
+export function mainpointsPrompt(language, passage, n) {
     return `
         ${passage}
 
