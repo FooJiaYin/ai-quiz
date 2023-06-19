@@ -1,20 +1,25 @@
+/** NOTE: JSON schema are generated bt ChatGPT; */
 export default {
-  "QG_json": `
-    [
-      {
-        "question": "question",
-        "options": [
-          "candidate 1",
-          "candidate 2",
-          "candidate 3",
-          "candidate 4"
-        ]
+  "MC": {
+    "type": "object",
+    "properties": {
+      "question": {
+        "type": "string"
+      },
+      "options": {
+        "type": "array",
+        "maxItems": 4,
+        "minItems": 4,
+        "items": {
+          "type": "string",
+          "description": "answer candidates for the question, do not contain prefix"
+        }
+      },
+      "answer": {
+        "type": "string",
+        "description": "the correct answer, must be one of the options",
       }
-    ]
-  `,
-  "QG_list": `
-    [
-      ["question", "option 1", "option 2", "option 3", "option 4"]
-    ]
-  `
-}
+    },
+    "required": ["question", "options", "answer"]
+  }
+};
