@@ -1,5 +1,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 
+const tasks = ['mainpoints', 'MC'];
+
 export const useQuiz = defineStore('quiz', {
 	state: () => {
 		return {
@@ -15,20 +17,24 @@ export const useQuiz = defineStore('quiz', {
 			this.transcript = input;
 			this['MC'] = [];
 			this.mainpoints = [];
+			this.messages = [];
+			for (let task of tasks) {
+				this[task] = [];
+			}
 			this.status = 'Loading...';
 			try {
-				let res = await $fetch('/api/quiz', {
-					method: 'POST', body: {
-						input, language, task: 'mainpoints'
+				for (let task of tasks) {
+					let res = await $fetch('/api/quiz', {
+						method: 'POST', body: {
+							input: task === 'mainpoints' ? input : this.messages,
+							language, task
+						}
+					});
+					if (task == 'mainpoints') {
+						this.messages = res.msg;
 					}
-				});
-				this.mainpoints = res.mainpoints;
-				res = await $fetch('/api/quiz', {
-					method: 'POST', body: {
-						input: res.msg, language, task: 'MC'
-					}
-				});
-				this['MC'] = res;
+					this[task] = res.result;
+				}
 				this.status = 'Completed!';
 			} catch (error) {
 				console.error(error);

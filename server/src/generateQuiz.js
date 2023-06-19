@@ -24,9 +24,9 @@ async function getMainpoints(input, language = "en-us") {
         messages: msg,
         max_tokens: 256,
     });
-    const mainPoints = res.content;
-    msg.push({ "role": "assistant", "content": mainPoints });
-    return { mainPoints, msg };
+    const result = res.content;
+    msg.push({ "role": "assistant", "content": result });
+    return { result, msg };
 }
 
 async function getQuestions(input, language = "en-us", task = "MC") {
@@ -55,7 +55,7 @@ function processQuestions(questions) {
                 "answerId": options.indexOf(answer)
             });
         }
-        return result;
+        return { result };
     } catch (error) {
         // Handle the error
         console.error(questions);
