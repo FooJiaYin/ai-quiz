@@ -8,7 +8,7 @@ export async function generateQuiz(input, language = "en-us", task) {
     }
 
     if (task === "mainpoints") {
-        return await getMainPoints(input, language);
+        return await getMainpoints(input, language);
     } else {
         const response = await getQuestions(input, language, task);
         const res = processQuestions(response);
@@ -16,7 +16,7 @@ export async function generateQuiz(input, language = "en-us", task) {
     }
 }
 
-async function getMainPoints(input, language = "en-us") {
+async function getMainpoints(input, language = "en-us") {
     // Get main points
     let req = mainpointsPrompt(language, input);
     let msg = [{ "role": "system", "content": req }];
