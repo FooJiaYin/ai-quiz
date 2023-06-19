@@ -12,7 +12,7 @@ export default {
         "minItems": 4,
         "items": {
           "type": "string",
-          "description": "answer candidates for the question, do not contain prefix"
+          "description": "4 answer candidates for the question, do not contain prefix"
         }
       },
       "answer": {
@@ -21,5 +21,29 @@ export default {
       }
     },
     "required": ["question", "options", "answer"]
+  },
+  "TF": {
+    "type": "object",
+    "properties": {
+      "question": {
+        "type": "string"
+      },
+      "answer": {
+        "type": "string",
+        "enum": ["True", "False"]
+      },
+      "reason": {
+        "type": "string"
+      }
+    },
+    "required": ["question", "answer"],
+    "if": {
+      "properties": {
+        "answer": { "const": "False" }
+      }
+    },
+    "then": {
+      "required": ["reason"]
+    }
   }
 };
