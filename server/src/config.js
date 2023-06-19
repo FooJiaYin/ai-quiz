@@ -1,4 +1,4 @@
-const defaultConfig = {
+const defaultParams = {
     model: "gpt-3.5-turbo",
     messages: [],
     temperature: 0.0,
@@ -8,4 +8,4 @@ const defaultConfig = {
     presence_penalty: 0
 };
 
-export default defaultConfig;
+export default defaultParams;

@@ -1,5 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
-import defaultConfig from "./config";
+import defaultParams from "./config";
 
 const runtimeConfig = useRuntimeConfig();
 const { openaiApiKey, openaiOrgId } = runtimeConfig;
@@ -22,7 +22,7 @@ export async function getResponse({
     }
     try {
         const completion = await openai.createChatCompletion({
-            ...defaultConfig,
+            ...defaultParams,
             ...props,
             messages: messages,
         });
