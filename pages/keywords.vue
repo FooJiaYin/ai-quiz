@@ -1,13 +1,6 @@
 <template>
     <v-container>
-        <v-row class="my-6">
-            <v-col v-for="({ keyword }, index) in quiz['definition']" cols="auto">
-                <div class="text-align-center bg-primary rounded-lg px-4 py-2" draggable="true"
-                    @dragstart="drag.set(keyword)">
-                    {{ keyword }}
-                </div>
-            </v-col>
-        </v-row>
+        <DraggableKeywords />
         <v-row v-for="({ keyword, definition }, index) in quiz['definition']">
             <v-col cols="4">
                 <TextBlank :answer="keyword" ref="blanks" />
@@ -22,7 +15,6 @@
 
 <script setup>
 const quiz = useQuiz();
-const drag = useDrag();
 const blanks = ref(null);
 
 function reset() {
