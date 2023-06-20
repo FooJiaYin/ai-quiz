@@ -9,8 +9,9 @@
 const props = defineProps(['keyword']);
 const drag = useDrag();
 const hidden = ref(false);
+defineExpose({ hide });
 
-function hide() {
-    hidden.value = true;
+function hide(value=true) {
+    hidden.value = value;
 }
 </script>
