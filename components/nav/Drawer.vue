@@ -5,6 +5,7 @@
             <NavLink v-if="quiz['mainpoints'].length > 0" link="/mainpoints" title="Main Points"></NavLink>
             <NavLink v-if="quiz['MC'].length > 0" link="/multiple-choice" title="Multiple Choice Quiz"></NavLink>
             <NavLink v-if="quiz['TF'].length > 0" link="/true-false" title="True/False Quiz"></NavLink>
+            <NavLink v-if="quiz['definition'].length > 0" link="/keywords" title="Keywords Definition"></NavLink>
         </v-list>
     </v-navigation-drawer>
 </template>
