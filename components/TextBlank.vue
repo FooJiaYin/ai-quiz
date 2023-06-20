@@ -1,7 +1,8 @@
 <template>
     <v-text-field variant="outlined" readonly hide-details
         :class="value !== '' ? answer === value ? 'text-success' : 'text-error' : ''" 
-        v-model="value" @drop="value = drag.text; drag.hide()" @dragover.prevent>
+        v-model="value" @drop="value = drag.text; drag.hide()" 
+        @dragover="e => {if (value == '') e.preventDefault()}">
     </v-text-field>
 </template>
 
