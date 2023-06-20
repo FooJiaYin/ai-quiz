@@ -45,5 +45,30 @@ export default {
     "then": {
       "required": ["reason"]
     }
+  },
+  "definition": {
+    "type": "object",
+    "properties": {
+      "keyword": {
+        "type": "string"
+      },
+      "definition": {
+        "type": "string"
+      }
+    },
+    "required": ["keyword", "definition"]
+  },
+  "cloze": {
+    "type": "object",
+    "properties": {
+      "keyword": {
+        "type": "string",
+      },
+      "sentence": {
+        "type": "string",
+        "description": "summary sentence that contain the keyword",
+      },
+    },
+    "required": ["keyword", "sentence"]
   }
 };
