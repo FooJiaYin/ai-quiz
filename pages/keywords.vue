@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <DraggableKeywords ref="keywords"/>
+        <DraggableKeywords :data="quiz['definition'].map(({ keyword }) => keyword)" ref="keywords" />
         <v-row v-for="({ keyword, definition }, index) in quiz['definition']">
             <v-col cols="4">
                 <TextBlank :answer="keyword" ref="blanks" />
