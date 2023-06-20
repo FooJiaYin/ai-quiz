@@ -4,11 +4,13 @@ export const useDrag = defineStore('drag', {
 	state: () => {
 		return {
 			text: '',
+			hide: null
 		};
 	},
 	actions: {
-		set(text) {
+		set(text, hide) {
 			this.text = text;
+			this.hide = hide;
 		}
 	}
 });
