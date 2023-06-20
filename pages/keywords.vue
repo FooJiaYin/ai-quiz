@@ -10,9 +10,7 @@
         </v-row>
         <v-row v-for="({ keyword, definition }, index) in quiz['definition']">
             <v-col cols="4">
-                <v-text-field variant="outlined" v-model="value[index]" ref="blanks"
-                    @drop="value[index] = draggedText" @dragover.prevent>
-                </v-text-field>
+                <TextBlank :answer="keyword" :draggedText="draggedText" ref="blanks" />
             </v-col>
             <v-col>
                 <p>{{ definition }}</p>
