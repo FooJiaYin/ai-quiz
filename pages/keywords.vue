@@ -1,8 +1,18 @@
 <template>
     <v-container>
-        <v-row v-for="({keyword, definition}, index) in quiz['definition']">
+        <v-row class="my-6">
+            <v-col v-for="({ keyword }, index) in quiz['definition']" cols="auto">
+                <div class="text-align-center bg-primary rounded-lg px-4 py-2" draggable="true"
+                    @dragstart="draggedText = keyword">
+                    {{ keyword }}
+                </div>
+            </v-col>
+        </v-row>
+        <v-row v-for="({ keyword, definition }, index) in quiz['definition']">
             <v-col cols="4">
-                <v-text-field variant="outlined" :value="keyword" ref="blanks" ></v-text-field>
+                <v-text-field variant="outlined" v-model="value[index]" ref="blanks"
+                    @drop="value[index] = draggedText" @dragover.prevent>
+                </v-text-field>
             </v-col>
             <v-col>
                 <p>{{ definition }}</p>
@@ -16,6 +26,7 @@
 const quiz = useQuiz();
 const blanks = ref(null);
 const value = ref({});
+const draggedText = ref("");
 
 function reset() {
     for (let i = 0; i < quiz['definition'].length; i++) {
