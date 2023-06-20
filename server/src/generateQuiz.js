@@ -10,9 +10,7 @@ export async function generateQuiz(input, language = "en-us", task) {
     if (task === "mainpoints" || task === "keywords") {
         return await extractContext(input, language, task);
     } else {
-        const response = await getQuestions(input, language, task);
-        const res = processQuestions(response, task);
-        return res;
+        return await getQuestions(input, language, task);
     }
 }
 
@@ -41,13 +39,27 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     // Get questions
     let msg = input;
     const callbackFunction = getFunctions(task);
-    const req = QGPrompt(language, task);
+
+    // Get prompt
+    let req;
+    if (task === "MC" || task === "TF") {
+        req = QGPrompt(language, task);
+    } else {
+        req = definitionPrompt(language);
+    } 
+    msg.push({ "role": "system", "content": req });
+
     const res = await getResponse({
         messages: msg,
         functions: [callbackFunction],
         function_call: { "name": callbackFunction["name"] },
     });
-    return res.function_call.arguments.result;
+    
+    if (task === "MC" || task === "TF") {
+        return processQuestions(res.function_call.arguments.result, task);
+    } else {
+        return res.function_call.arguments;
+    }
 }
 
 function processQuestions(questions, task) {

@@ -5,7 +5,7 @@ const tasks = [
 	'MC',
 	'TF', 
 	'keywords', 
-	// 'definition', 
+	'definition', 
 	// 'cloze'
 ];
 
@@ -18,14 +18,7 @@ export const useQuiz = defineStore('quiz', {
 			MC: [],
 			TF: [],
 			keywords: '',
-			definition: [
-				{'keyword': '炊飯器', 'definition': '米を炊くための電気機器で、自動的に米を炊いてくれる器具。'},
-				{'keyword': '酢飯の調味料', 'definition': '寿司飯に混ぜるための調味料で、酢、砂糖、塩を組み合わせたもの。'},
-				{'keyword': '寿司海苔', 'definition': '寿司を巻くための海藻の乾燥した葉。'},
-				{'keyword': '寿司飯', 'definition': '寿司のベースとなる、炊いた米に酢飯の調味料を混ぜたもの。'},
-				{'keyword': '具材', 'definition': '寿司の具となる、刺身や海老、アボカド、キュウリなどの食材。'},
-				{'keyword': '寿司巻き', 'definition': '寿司の具材を寿司飯の上にのせ、巻いた状態の寿司のこと。'}
-			],
+			definition: [],
 			cloze: [
 				{'question': '___是咖啡的原材料，从咖啡树上结出来的小果子，经过烘焙和研磨后制成咖啡。', 'answer': '咖啡豆'},
 				{'question': '___是一种高质量的咖啡豆，与罗布斯塔相比更优质，口感更高级。', 'answer': '阿拉比卡'},
