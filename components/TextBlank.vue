@@ -1,6 +1,7 @@
 <template>
-    <v-text-field variant="outlined" v-model="value"
-        @drop="value = drag.text" @dragover.prevent>
+    <v-text-field variant="outlined" readonly
+        :class="value !== '' ? answer === value ? 'text-success' : 'text-error' : ''" 
+        v-model="value" @drop="value = drag.text" @dragover.prevent>
     </v-text-field>
 </template>
 
