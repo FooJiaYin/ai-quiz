@@ -1,6 +1,13 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 
-const tasks = ['mainpoints', 'MC', 'TF'];
+const tasks = [
+	'mainpoints', 
+	'MC',
+	'TF', 
+	'keywords', 
+	// 'definition', 
+	// 'cloze'
+];
 
 export const useQuiz = defineStore('quiz', {
 	state: () => {
@@ -46,11 +53,11 @@ export const useQuiz = defineStore('quiz', {
 				for (let task of tasks) {
 					let res = await $fetch('/api/quiz', {
 						method: 'POST', body: {
-							input: task === 'mainpoints' ? input : this.messages,
+							input: task === 'mainpoints' || task === "keywords" ? input : this.messages,
 							language, task
 						}
 					});
-					if (task == 'mainpoints') {
+					if (task === 'mainpoints' || task === "keywords") {
 						this.messages = res.msg;
 					}
 					this[task] = res.result;

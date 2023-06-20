@@ -1,5 +1,5 @@
 import { getResponse } from "./openai";
-import { mainpointsPrompt, QGPrompt } from "./prompt.js";
+import { mainpointsPrompt, QGPrompt, keywordsPrompt, definitionPrompt, clozeParagraphPrompt, clozePrompt } from "./prompt.js";
 import { getFunctions } from "./functions.js";
 
 export async function generateQuiz(input, language = "en-us", task) {
@@ -7,8 +7,8 @@ export async function generateQuiz(input, language = "en-us", task) {
         input = input.slice(0, 1500);
     }
 
-    if (task === "mainpoints") {
-        return await getMainpoints(input, language);
+    if (task === "mainpoints" || task === "keywords") {
+        return await extractContext(input, language, task);
     } else {
         const response = await getQuestions(input, language, task);
         const res = processQuestions(response, task);
@@ -16,13 +16,21 @@ export async function generateQuiz(input, language = "en-us", task) {
     }
 }
 
-async function getMainpoints(input, language = "en-us") {
+async function extractContext(input, language = "en-us", task) {
     // Get main points
-    let req = mainpointsPrompt(language, input);
-    let msg = [{ "role": "system", "content": req }];
+    let prompt, max_tokens = 256, presence_penalty = 0.0;
+    if (task === "mainpoints") {
+        prompt = mainpointsPrompt(language, input);
+    } else {
+        prompt = keywordsPrompt(language, input);
+        max_tokens = 100;
+        presence_penalty = 1.0;
+    }
+    let msg = [{ "role": "system", "content": prompt }];
     let res = await getResponse({
         messages: msg,
-        max_tokens: 256,
+        max_tokens,
+        presence_penalty,
     });
     const result = res.content;
     msg.push({ "role": "assistant", "content": result });
