@@ -3,14 +3,14 @@
         <v-row class="my-6">
             <v-col v-for="({ keyword }, index) in quiz['definition']" cols="auto">
                 <div class="text-align-center bg-primary rounded-lg px-4 py-2" draggable="true"
-                    @dragstart="draggedText = keyword">
+                    @dragstart="drag.set(keyword)">
                     {{ keyword }}
                 </div>
             </v-col>
         </v-row>
         <v-row v-for="({ keyword, definition }, index) in quiz['definition']">
             <v-col cols="4">
-                <TextBlank :answer="keyword" :draggedText="draggedText" ref="blanks" />
+                <TextBlank :answer="keyword" ref="blanks" />
             </v-col>
             <v-col>
                 <p>{{ definition }}</p>
@@ -22,9 +22,8 @@
 
 <script setup>
 const quiz = useQuiz();
+const drag = useDrag();
 const blanks = ref(null);
-const value = ref({});
-const draggedText = ref("");
 
 function reset() {
     for (let i = 0; i < quiz['definition'].length; i++) {

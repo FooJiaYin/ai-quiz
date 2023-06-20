@@ -1,11 +1,12 @@
 <template>
     <v-text-field variant="outlined" v-model="value"
-        @drop="value = draggedText" @dragover.prevent>
+        @drop="value = drag.text" @dragover.prevent>
     </v-text-field>
 </template>
 
 <script setup>
-const props = defineProps(['answer', 'draggedText']);
+const props = defineProps(['answer']);
+const drag = useDrag();
 const value = ref("");
 defineExpose({ reset });
 
