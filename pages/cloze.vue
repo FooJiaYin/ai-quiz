@@ -2,14 +2,13 @@
     <v-row>
         <v-col>
             <v-container>
-                <v-row v-for="({ question, answer }, index) in quiz['cloze']">
-                    <v-col cols="3">
-                        <TextBlank :answer="answer" ref="blanks" />
-                    </v-col>
-                    <v-col>
-                        <p>{{ question }}</p>
-                    </v-col>
-                </v-row>
+                <ol>
+                    <li v-for="({ question, answer }, index) in quiz['cloze']" class="my-5">
+                        <!-- TODO: Do not hide keywords for multiple blanks in 1 question -->
+                        <TextBlank v-for="(part, i) in question" :text="part" :answer="answer"
+                            :hideBlank="i == question.length - 1" :key="i" />
+                    </li>
+                </ol>
                 <CenterButton class="mt-10" @click="reset">Try Again</CenterButton>
             </v-container>
         </v-col>

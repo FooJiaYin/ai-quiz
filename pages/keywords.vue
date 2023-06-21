@@ -3,7 +3,7 @@
         <v-col>
             <v-container>
                 <v-row v-for="({ keyword, definition }, index) in quiz['definition']">
-                    <v-col cols="3">
+                    <v-col cols="auto">
                         <TextBlank :answer="keyword" ref="blanks" />
                     </v-col>
                     <v-col>
