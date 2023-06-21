@@ -53,6 +53,7 @@ export async function getResponse({
             } catch (e) {
                 return {
                     error: "Error parsing function call arguments",
+                    arguments: message.function_call.arguments,
                     ...response,
                 };
             }
