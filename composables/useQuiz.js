@@ -13,6 +13,7 @@ export const useQuiz = defineStore('quiz', {
 	state: () => {
 		return {
 			status: '',
+			errors: [],
 			transcript: '',
 			mainpoints: '',
 			MC: [],
@@ -49,9 +50,11 @@ export const useQuiz = defineStore('quiz', {
 				try {
 					if (task === 'MC' || task === 'TF') {
 						input = this.messages.mainpoints;
+						if (input == undefined) throw new Error('Main points not generated');
 					}
 					if (task === 'cloze' || task === 'definition') {
 						input = this.messages.keywords;
+						if (input == undefined) throw new Error('Keywords not generated');
 					}
 
 					const res = await $fetch('/api/quiz', {
@@ -73,9 +76,9 @@ export const useQuiz = defineStore('quiz', {
 				} catch (error) {
 					let message = error.message;
 					if (error.data?.message) message = error.data.message;
-					this.status = `Error generating ${task}: ${message}`;
-					console.error(this.status);
-					throw error;
+					message = `Error generating ${task}: ${message}`;
+					this.errors.push(message);
+					console.error(message);
 				}
 			}
 			this.status = 'Completed!';
