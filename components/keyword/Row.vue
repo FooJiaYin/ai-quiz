@@ -1,7 +1,7 @@
 <template>
     <div class="fixed pa-4">
         <div v-for="(keyword, index) in keywords" cols="auto" class="py-1" :key="index">
-            <Draggable :keyword="keyword" :index="index" ref="draggables" />
+            <KeywordDraggable :keyword="keyword" :index="index" ref="draggables" />
         </div>
     </div>
 </template>

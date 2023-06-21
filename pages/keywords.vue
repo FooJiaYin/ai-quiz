@@ -4,7 +4,7 @@
             <v-container>
                 <v-row v-for="({ keyword, definition }, index) in quiz['definition']">
                     <v-col cols="auto">
-                        <TextBlank :answer="keyword" ref="blanks" />
+                        <KeywordBlank :answer="keyword" ref="blanks" />
                     </v-col>
                     <v-col>
                         <p>{{ definition }}</p>
@@ -14,7 +14,7 @@
             </v-container>
         </v-col>
         <v-col cols="1">
-            <DraggableKeywords :data="quiz['definition'].map(({ keyword }) => keyword)" ref="keywords" />
+            <KeywordRow :data="quiz['definition'].map(({ keyword }) => keyword)" ref="keywords" />
         </v-col>
     </v-row>
 </template>

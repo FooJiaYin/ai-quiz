@@ -5,7 +5,7 @@
                 <ol>
                     <li v-for="({ question, answer }, index) in quiz['cloze']" class="my-5">
                         <!-- TODO: Do not hide keywords for multiple blanks in 1 question -->
-                        <TextBlank v-for="(part, i) in question" :text="part" :answer="answer"
+                        <KeywordBlank v-for="(part, i) in question" :text="part" :answer="answer"
                             :hideBlank="i == question.length - 1" :key="i" />
                     </li>
                 </ol>
@@ -13,7 +13,7 @@
             </v-container>
         </v-col>
         <v-col cols="1">
-            <DraggableKeywords :data="quiz['cloze'].map(({ answer }) => answer)" ref="keywords" />
+            <KeywordRow :data="quiz['cloze'].map(({ answer }) => answer)" ref="keywords" />
         </v-col>
     </v-row>
 </template>
