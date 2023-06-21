@@ -44,9 +44,13 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     let req;
     if (task === "MC" || task === "TF") {
         req = QGPrompt(language, task);
-    } else {
+    } else if (task === "definition") {
         req = definitionPrompt(language);
-    } 
+    } else if (task === "cloze") {
+        req = clozePrompt(language);
+    } else {
+        req = clozeParagraphPrompt(language);
+    }
     msg.push({ "role": "system", "content": req });
 
     const res = await getResponse({
@@ -54,9 +58,11 @@ async function getQuestions(input, language = "en-us", task = "MC") {
         functions: [callbackFunction],
         function_call: { "name": callbackFunction["name"] },
     });
-    
+
     if (task === "MC" || task === "TF") {
         return processQuestions(res.function_call.arguments.result, task);
+    } else if (task === "cloze") {
+        return processCloze(res.function_call.arguments.result);
     } else {
         return res.function_call.arguments;
     }
@@ -88,4 +94,29 @@ function processQuestions(questions, task) {
         console.error(questions);
         return { error: error.message };
     }
+}
+
+function processCloze(clozeList) {
+    const sentenceList = []; // in lowercase
+    const processedClozes = [];
+    const result = [];
+    for (let { keyword, sentence } of clozeList) {
+        // Case insensitive match
+        if (!sentence.toLowerCase().includes(keyword.toLowerCase()) && !sentence.includes("_")) continue;
+        const completeSentence = sentence.replace("_", keyword).toLowerCase();
+
+        // Replace keyword with '___' case insensitively
+        const pattern = new RegExp(keyword, "gi");
+        const clozeSentence = sentence.replace(pattern, "___");
+
+        // Remove duplicate clozes
+        if (!sentenceList.includes(completeSentence) && !processedClozes.includes(clozeSentence.toLowerCase())) {
+            sentenceList.push(completeSentence);
+            processedClozes.push(clozeSentence.toLowerCase());
+            result.push({ question: clozeSentence, answer: keyword });
+        }
+    }
+    // Shuffle result
+    result.sort(() => Math.random() - 0.5);
+    return { result };
 }
