@@ -25,7 +25,8 @@ export const useQuiz = defineStore('quiz', {
 	actions: {
 		// since we rely on `this`, we cannot use an arrow function
 		async generateQuiz(transcript, language) {
-			if (this.status === 'Loading...') return;
+			// Prevent resending requests while generating quiz
+			if (this.status.includes('...')) return;
 			this.status = 'Loading...';
 
 			// Retry failed requests only if the input is the same
@@ -43,6 +44,8 @@ export const useQuiz = defineStore('quiz', {
 			}
 			try {
 				for (const task of selectedTask) {
+					this.status = `Generating ${task}...`;
+					
 					let input = transcript;
 					if (task === 'MC' || task === 'TF') {
 						input = this.messages.mainpoints;
