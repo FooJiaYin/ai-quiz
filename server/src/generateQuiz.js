@@ -128,8 +128,8 @@ function processQuestions(questions, task) {
 function processDefinition(definitions) {
     const result = [];
     for ( let { keyword, definition } of definitions) {
-        // Case insensitive match
-        const pattern = new RegExp(keyword, "gi");
+        // Match whole word case insensitively
+        const pattern = new RegExp("\\b" + keyword + "\\b", "gi");
         // Remove keyword from definition
         definition = definition.replace(pattern, "");
         result.push({ keyword, definition });
@@ -153,7 +153,8 @@ function processCloze(clozeList) {
         const completeSentence = sentence.replace("_", keyword).toLowerCase();
 
         // Replace keyword with '___' case insensitively
-        const pattern = new RegExp(keyword, "gi");
+        // \b: word boundary: match the keyword as a whole word
+        const pattern = new RegExp("\\b" + keyword, "gi");
         const clozeSentence = sentence.replace(pattern, "___");
 
         // Remove duplicate clozes
