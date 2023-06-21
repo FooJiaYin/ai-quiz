@@ -25,6 +25,8 @@ export const useQuiz = defineStore('quiz', {
 	actions: {
 		// since we rely on `this`, we cannot use an arrow function
 		async generateQuiz(input, language) {
+			if (this.status === 'Loading...') return;
+			this.status = 'Loading...';
 			this.transcript = input;
 			this['MC'] = [];
 			this.mainpoints = [];
@@ -32,7 +34,6 @@ export const useQuiz = defineStore('quiz', {
 			for (let task of tasks) {
 				this[task] = [];
 			}
-			this.status = 'Loading...';
 			try {
 				for (let task of tasks) {
 					let res = await $fetch('/api/quiz', {
