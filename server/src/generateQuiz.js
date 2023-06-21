@@ -1,4 +1,4 @@
-import { getResponse } from "./openai";
+import { getOpenAIResponse } from "./openai";
 import { mainpointsPrompt, QGPrompt, keywordsPrompt, definitionPrompt, clozeParagraphPrompt, clozePrompt } from "./prompt.js";
 import { getFunctions } from "./functions.js";
 
@@ -37,7 +37,7 @@ async function extractContext(input, language = "en-us", task) {
         presence_penalty = 1.0;
     }
     let msg = [{ "role": "system", "content": prompt }];
-    let res = await getResponse({
+    let res = await getOpenAIResponse({
         model: "gpt-3.5-turbo",
         messages: msg,
         max_tokens,
@@ -72,7 +72,7 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     }
     msg.push({ "role": "system", "content": req });
 
-    const res = await getResponse({
+    const res = await getOpenAIResponse({
         messages: msg,
         functions: [callbackFunction],
         function_call: { "name": callbackFunction["name"] },

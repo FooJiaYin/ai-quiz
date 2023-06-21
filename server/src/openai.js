@@ -22,7 +22,7 @@ const openai = new OpenAIApi(configuration);
  * Please refer to the [OpenAI API documentation](https://beta.openai.com/docs/api-reference/create-completion) for more information
  * @returns {object} - The response from the API, in the format {content: "Hello", usage: 0.123, function_call: {name: "getUserInfo", arguments: {}}, messages}
  */
-export async function getResponse({
+export async function getOpenAIResponse({
     prompt = "",
     messages = [],
     ...request
@@ -82,7 +82,7 @@ async function handleFunctionCall(response, request) {
             ...response.messages,
             { role: "function", "content": JSON.stringify(result), "name": response.function_call.name }
         ];
-        response = await getResponse({
+        response = await getOpenAIResponse({
             ...request,
             prompt: "",
             messages: messages,
