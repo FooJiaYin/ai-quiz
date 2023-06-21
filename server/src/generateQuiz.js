@@ -2,6 +2,12 @@ import { getResponse } from "./openai";
 import { mainpointsPrompt, QGPrompt, keywordsPrompt, definitionPrompt, clozeParagraphPrompt, clozePrompt } from "./prompt.js";
 import { getFunctions } from "./functions.js";
 
+/**
+ * Generate a quiz from a passage for given task
+ * @param {*} input: prompt (string) or messages [{role, content}]
+ * @param {string} language 
+ * @param {string} task: "MC", "TF", "cloze", "definition", "mainpoints" or "keywords" 
+ */
 export async function generateQuiz(input, language = "en-us", task) {
     if (input.length > 1500) {
         input = input.slice(0, 1500);
@@ -14,6 +20,12 @@ export async function generateQuiz(input, language = "en-us", task) {
     }
 }
 
+/**
+ * Extract main points or keywords from a passage with OpenAI API
+ * @param {string} input: passage
+ * @param {string} language 
+ * @param {string} task: "mainpoints" or "keywords"
+ */
 async function extractContext(input, language = "en-us", task) {
     // Get main points
     let prompt, max_tokens = 256, presence_penalty = 0.0;
@@ -36,6 +48,12 @@ async function extractContext(input, language = "en-us", task) {
     return { result, msg };
 }
 
+/**
+ * Get response from OpenAI API and process the response
+ * @param {[{role, content}]} input: messages 
+ * @param {string} language 
+ * @param {string} task: "MC", "TF", "cloze" or "definition"
+ */
 async function getQuestions(input, language = "en-us", task = "MC") {
     // Get questions
     let msg = input;
@@ -69,6 +87,11 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     }
 }
 
+/**
+ * Shuffle options and insert answerId
+ * @param {[{question, answer, ...}]} questions 
+ * @param {string} task 
+ */
 function processQuestions(questions, task) {
     try {
         let result = [];
@@ -98,6 +121,12 @@ function processQuestions(questions, task) {
     }
 }
 
+/** 
+ * Post-process cloze questions
+ * 1. Remove duplicate sentences
+ * 2. Remove keywords with unified blank format
+ * @param {[{keyword, sentence}]} clozeList 
+ */
 function processCloze(clozeList) {
     const sentenceList = []; // in lowercase
     const processedClozes = [];
