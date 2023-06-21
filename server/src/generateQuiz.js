@@ -71,18 +71,19 @@ async function getQuestions(input, language = "en-us", task = "MC") {
 function processQuestions(questions, task) {
     try {
         let result = [];
-        for (let { question, options, answer } of questions) {
+        for (let q of questions) {
             if (task === "MC") {
+                const { question, answer, options } = q;
                 // Shuffle options
-                options = options.sort(() => Math.random() - 0.5);
+                options.sort(() => Math.random() - 0.5);
                 result.push({
-                    question,
-                    "options": options,
+                    question, options,
                     "answerId": options.indexOf(answer)
                 });
-            } else if (task === "TF") {
+            } else {
+                const { question, reason, answer } = q;
                 result.push({
-                    question,
+                    question, reason,
                     "options": ["True", "False"],
                     "answerId": answer === "True" ? 0 : 1
                 });
