@@ -26,6 +26,7 @@ async function extractContext(input, language = "en-us", task) {
     }
     let msg = [{ "role": "system", "content": prompt }];
     let res = await getResponse({
+        model: "gpt-3.5-turbo",
         messages: msg,
         max_tokens,
         presence_penalty,
