@@ -53,7 +53,8 @@ export default {
         "type": "string"
       },
       "definition": {
-        "type": "string"
+        "type": "string",
+        "description": "the definition of the keyword without the keyword itself"
       }
     },
     "required": ["keyword", "definition"]

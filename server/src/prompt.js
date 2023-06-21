@@ -39,6 +39,7 @@ export function keywordsPrompt(language, passage) {
 export function definitionPrompt(language) {
     return `
         give me the definition of the keywords above based on the contextual meaning in the original text rather than the general meaning
+        Must not include the keyword in the definition
         Use language: ${language}
     `;
 }
