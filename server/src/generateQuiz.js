@@ -83,7 +83,7 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     } else if (task === "cloze") {
         return processCloze(res.function_call.arguments.result);
     } else {
-        return res.function_call.arguments;
+        return processDefinition(res.function_call.arguments.result);
     }
 }
 
@@ -119,6 +119,22 @@ function processQuestions(questions, task) {
         console.error(questions);
         return { error: error.message };
     }
+}
+
+/**
+ * Remove keywords from definitions
+ * @param {[{keyword, definition}]} definitions
+ */
+function processDefinition(definitions) {
+    const result = [];
+    for ( let { keyword, definition } of definitions) {
+        // Case insensitive match
+        const pattern = new RegExp(keyword, "gi");
+        // Remove keyword from definition
+        definition = definition.replace(pattern, "");
+        result.push({ keyword, definition });
+    }
+    return { result };
 }
 
 /** 
