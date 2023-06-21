@@ -1,11 +1,16 @@
-
 <template>
-    <v-row class="my-6">
-        <v-col v-for="(keyword, index) in keywords" cols="auto" class="py-1" :key="index">
-            <Draggable :keyword="keyword" ref="draggables" />
-        </v-col>
-    </v-row>
+    <div class="fixed pa-4">
+        <div v-for="(keyword, index) in keywords" cols="auto" class="py-1" :key="index">
+            <Draggable :keyword="keyword" :index="index" ref="draggables" />
+        </div>
+    </div>
 </template>
+
+<style>
+.fixed {
+    position: fixed;
+}
+</style>
 
 <script setup>
 const props = defineProps(['data']);

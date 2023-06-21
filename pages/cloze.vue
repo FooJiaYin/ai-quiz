@@ -1,16 +1,22 @@
 <template>
-    <v-container>
-        <DraggableKeywords :data="quiz['cloze'].map(({ answer }) => answer)" ref="keywords" />
-        <v-row v-for="({ question, answer }, index) in quiz['cloze']">
-            <v-col cols="4">
-                <TextBlank :answer="answer" ref="blanks" />
-            </v-col>
-            <v-col>
-                <p>{{ question }}</p>
-            </v-col>
-        </v-row>
-        <CenterButton class="mt-10" @click="reset">Try Again</CenterButton>
-    </v-container>
+    <v-row>
+        <v-col>
+            <v-container>
+                <v-row v-for="({ question, answer }, index) in quiz['cloze']">
+                    <v-col cols="3">
+                        <TextBlank :answer="answer" ref="blanks" />
+                    </v-col>
+                    <v-col>
+                        <p>{{ question }}</p>
+                    </v-col>
+                </v-row>
+                <CenterButton class="mt-10" @click="reset">Try Again</CenterButton>
+            </v-container>
+        </v-col>
+        <v-col cols="1">
+            <DraggableKeywords :data="quiz['cloze'].map(({ answer }) => answer)" ref="keywords" />
+        </v-col>
+    </v-row>
 </template>
 
 <script setup>
