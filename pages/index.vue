@@ -14,7 +14,7 @@ const language = ref("");
 const status = ref("");
 const statusColor = computed(() =>
     quiz.status === "Completed!" ? "text-success" : 
-    quiz.status === "Error" ? "text-error" : 
+    quiz.includes("Error") ? "text-error" : 
     "black"
 );
 

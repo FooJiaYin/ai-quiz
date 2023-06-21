@@ -4,7 +4,7 @@ import { getFunctions } from "./functions.js";
 
 /**
  * Generate a quiz from a passage for given task
- * @param {*} input: prompt (string) or messages [{role, content}]
+ * @param {string | [{role, content}]} input: prompt (string) or messages [{role, content}]
  * @param {string} language 
  * @param {string} task: "MC", "TF", "cloze", "definition", "mainpoints" or "keywords" 
  */
@@ -12,7 +12,6 @@ export async function generateQuiz(input, language = "en-us", task) {
     if (input.length > 1500) {
         input = input.slice(0, 1500);
     }
-
     if (task === "mainpoints" || task === "keywords") {
         return await extractContext(input, language, task);
     } else {
@@ -78,12 +77,17 @@ async function getQuestions(input, language = "en-us", task = "MC") {
         function_call: { "name": callbackFunction["name"] },
     });
 
-    if (task === "MC" || task === "TF") {
-        return processQuestions(res.function_call.arguments.result, task);
-    } else if (task === "cloze") {
-        return processCloze(res.function_call.arguments.result);
-    } else {
-        return processDefinition(res.function_call.arguments.result);
+    try {
+        if (task === "MC" || task === "TF") {
+            return processQuestions(res.function_call.arguments.result, task);
+        } else if (task === "cloze") {
+            return processCloze(res.function_call.arguments.result);
+        } else {
+            return processDefinition(res.function_call.arguments.result);
+        }
+    } catch (error) {
+        error.message = `Error processing response result: ${error.message}`;
+        throw error;
     }
 }
 
@@ -93,32 +97,26 @@ async function getQuestions(input, language = "en-us", task = "MC") {
  * @param {string} task 
  */
 function processQuestions(questions, task) {
-    try {
-        let result = [];
-        for (let q of questions) {
-            if (task === "MC") {
-                const { question, answer, options } = q;
-                // Shuffle options
-                options.sort(() => Math.random() - 0.5);
-                result.push({
-                    question, options,
-                    "answerId": options.indexOf(answer)
-                });
-            } else {
-                const { question, reason, answer } = q;
-                result.push({
-                    question, reason,
-                    "options": ["True", "False"],
-                    "answerId": answer === "True" ? 0 : 1
-                });
-            }
+    let result = [];
+    for (let q of questions) {
+        if (task === "MC") {
+            const { question, answer, options } = q;
+            // Shuffle options
+            options.sort(() => Math.random() - 0.5);
+            result.push({
+                question, options,
+                "answerId": options.indexOf(answer)
+            });
+        } else {
+            const { question, reason, answer } = q;
+            result.push({
+                question, reason,
+                "options": ["True", "False"],
+                "answerId": answer === "True" ? 0 : 1
+            });
         }
-        return { result };
-    } catch (error) {
-        // Handle the error
-        console.error(questions);
-        return { error: error.message };
     }
+    return { result };
 }
 
 /**
@@ -127,7 +125,7 @@ function processQuestions(questions, task) {
  */
 function processDefinition(definitions) {
     const result = [];
-    for ( let { keyword, definition } of definitions) {
+    for (let { keyword, definition } of definitions) {
         // Match whole word case insensitively
         const pattern = new RegExp("\\b" + keyword + "\\b", "gi");
         // Remove keyword from definition

@@ -42,11 +42,11 @@ export const useQuiz = defineStore('quiz', {
 			for (const task of selectedTask) {
 				this[task] = [];
 			}
-			try {
-				for (const task of selectedTask) {
-					this.status = `Generating ${task}...`;
-					
-					let input = transcript;
+			for (const task of selectedTask) {
+				this.status = `Generating ${task}...`;
+
+				let input = transcript;
+				try {
 					if (task === 'MC' || task === 'TF') {
 						input = this.messages.mainpoints;
 					}
@@ -70,12 +70,15 @@ export const useQuiz = defineStore('quiz', {
 						}));
 					}
 					this[task] = res.result;
+				} catch (error) {
+					let message = error.message;
+					if (error.data?.message) message = error.data.message;
+					this.status = `Error generating ${task}: ${message}`;
+					console.error(this.status);
+					throw error;
 				}
-				this.status = 'Completed!';
-			} catch (error) {
-				console.error(error);
-				this.status = 'Error';
 			}
+			this.status = 'Completed!';
 		},
 	},
 });
