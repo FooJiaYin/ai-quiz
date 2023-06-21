@@ -18,6 +18,6 @@ const statusColor = computed(() =>
 );
 
 async function generateQuiz() {
-    await quiz.generateQuiz(input.value, language.value);
+    await quiz.generateQuiz(input.value, language.value == "" ? "en-us" : language.value);
 }
 </script>
