@@ -24,27 +24,42 @@ export const useQuiz = defineStore('quiz', {
 	},
 	actions: {
 		// since we rely on `this`, we cannot use an arrow function
-		async generateQuiz(input, language) {
+		async generateQuiz(transcript, language) {
 			if (this.status === 'Loading...') return;
 			this.status = 'Loading...';
-			this.transcript = input;
-			this['MC'] = [];
-			this.mainpoints = [];
-			this.messages = [];
-			for (const task of tasks) {
+
+			// Retry failed requests only if the input is the same
+			let selectedTask = [...tasks];
+			if (transcript == this.transcript && language == this.language) {
+				selectedTask = selectedTask.filter(task => this[task].length === 0);
+			} else {
+				this.messages = {};
+			}
+
+			this.transcript = transcript;
+			this.language = language;
+			for (const task of selectedTask) {
 				this[task] = [];
 			}
 			try {
-				for (const task of tasks) {
-					const res = await $fetch('/api/quiz', {
-						method: 'POST', body: {
-							input: task === 'mainpoints' || task === "keywords" ? input : this.messages,
-							language, task
-						}
-					});
-					if (task === 'mainpoints' || task === "keywords") {
-						this.messages = res.msg;
+				for (const task of selectedTask) {
+					let input = transcript;
+					if (task === 'MC' || task === 'TF') {
+						input = this.messages.mainpoints;
 					}
+					if (task === 'cloze' || task === 'definition') {
+						input = this.messages.keywords;
+					}
+
+					const res = await $fetch('/api/quiz', {
+						method: 'POST', body: { input, language, task }
+					});
+
+					// Save messages for later tasks
+					if (task === 'mainpoints' || task === "keywords") {
+						this.messages[task] = res.msg;
+					}
+					// Split cloze questions by '___' to render the inline blank
 					if (task == 'cloze') {
 						res.result = res.result.map(({ question, answer }) => ({
 							question: question.split('___'),
