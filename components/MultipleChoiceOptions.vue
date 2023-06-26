@@ -9,6 +9,9 @@
             </v-card>
         </v-item>
     </v-item-group>
+    <div v-if="selectedOption != null && q.reason && q.answerId == 1">
+        <i>Reason: {{ q.reason }}</i>
+    </div>
 </template>
 
 <script setup>
