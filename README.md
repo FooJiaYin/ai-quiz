@@ -10,8 +10,12 @@ Features
 
 - Input text for generation
 - Select language (default to English)
-- Generate main points from text
-- Generate multiple choice questions
+- Generate quiz questions from text
+    - Main points
+    - Multiple choice questions
+    - True/false questions
+    - Keywords and definition matching
+    - Cloze questions
 
 ### Limitations
 
@@ -19,17 +23,8 @@ Features
 
 ### Future Work
 
-- Quiz generation improvements
-    - Accept longer text input
-    - Auto detect language from text
-
-- Quiz types
-    - Generate true/false questions
-    - Generate fill-in-the-blank questions
-    - Extract keywords and its definition
-
-- UI/UX enhancements
-    - Hide main points and questions link when re-generating
+- Optimization for multiple choice questions
+- Retry failed generation requests
 
 Development
 -----------
