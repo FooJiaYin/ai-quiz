@@ -29,6 +29,7 @@ export const useQuiz = defineStore('quiz', {
 			// Prevent resending requests while generating quiz
 			if (this.status.includes('...')) return;
 			this.status = 'Loading...';
+			this.errors = [];
 
 			// Retry failed requests only if the input is the same
 			let selectedTask = [...tasks];
