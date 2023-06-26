@@ -108,11 +108,14 @@ function processQuestions(questions, task) {
                 "answerId": options.indexOf(answer)
             });
         } else {
-            const { question, reason, answer } = q;
+            const { true_statement, false_statement } = q;
+            // randomly select true or false, then output {"statement": "string", "answer": "string, True or false"}
+            const question = Math.random() < 0.5 ? true_statement : false_statement;
             result.push({
-                question, reason,
+                question,
                 "options": ["True", "False"],
-                "answerId": answer === "True" ? 0 : 1
+                "answerId": question === true_statement ? 0 : 1,
+                "reason": true_statement
             });
         }
     }

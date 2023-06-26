@@ -25,26 +25,14 @@ export default {
   "TF": {
     "type": "object",
     "properties": {
-      "question": {
+      "true_statement": {
         "type": "string"
       },
-      "answer": {
-        "type": "string",
-        "enum": ["True", "False"]
-      },
-      "reason": {
+      "false_statement": {
         "type": "string"
-      }
+      },
     },
-    "required": ["question", "answer"],
-    "if": {
-      "properties": {
-        "answer": { "const": "False" }
-      }
-    },
-    "then": {
-      "required": ["reason"]
-    }
+    "required": ["true_statement", "false_statement"],
   },
   "definition": {
     "type": "object",

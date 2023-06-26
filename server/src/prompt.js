@@ -3,9 +3,7 @@ import schema from "./schema.js";
 const quizDescription = {
     "MC": "the quiz includes one question and 4 answer candidates for each main point above, \
             The first candidate must be the correct answer.",
-    "TF": "the quiz includes one True or False question for each main point above,\
-            Then showing the correct answer after each question \
-            If the answer is False, showing the reason after the correct answer"
+    "TF": "For each main point above, give one corrent statement and one false statement about the main point",
 };
 
 export function QGPrompt(language, task) {
