@@ -1,6 +1,9 @@
 import { getOpenAIResponse } from "./openai";
 import { mainpointsPrompt, QGPrompt, keywordsPrompt, definitionPrompt, clozeParagraphPrompt, clozePrompt } from "./prompt.js";
 import { getFunctions } from "./functions.js";
+import XRegExp from "xregexp";
+
+const wordBoundary = "[\\p{Katakana}\\p{Bopomofo}\\p{Hiragana}\\p{Han}\\p{Hangul}\\p{Khmer}\\p{Lao}\\p{Myanmar}\\p{Ogham}\\p{Thai}\\p{Tibetan}\\p{Punctuation}]|\\b|^|$" 
 
 /**
  * Generate a quiz from a passage for given task
@@ -130,9 +133,9 @@ function processDefinition(definitions) {
     const result = [];
     for (let { keyword, definition } of definitions) {
         // Match whole word case insensitively
-        const pattern = new RegExp("\\b" + keyword + "\\b", "gi");
+        const pattern = XRegExp(`(${wordBoundary})${keyword}(${wordBoundary})`, "gi");
         // Remove keyword from definition
-        definition = definition.replace(pattern, "");
+        definition = definition.replace(pattern, "$1$2");
         result.push({ keyword, definition });
     }
     return { result };
@@ -155,8 +158,8 @@ function processCloze(clozeList) {
 
         // Replace keyword with '___' case insensitively
         // \b: word boundary: match the keyword as a whole word
-        const pattern = new RegExp("\\b" + keyword, "gi");
-        const clozeSentence = sentence.replace(pattern, "___");
+        const pattern = XRegExp(`(${wordBoundary})${keyword}`, "gi");
+        const clozeSentence = sentence.replace(pattern, "$1___");
 
         // Remove duplicate clozes
         if (!sentenceList.includes(completeSentence) && !processedClozes.includes(clozeSentence.toLowerCase())) {
