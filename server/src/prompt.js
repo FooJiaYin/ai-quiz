@@ -118,3 +118,45 @@ ${passage}
 <Start of the output>
     `;
 }
+
+export function diagramPrompt(language, sop) {
+    return `
+Generate a flowchart using valid mermaid.js syntax that shows the process of the following SOP:
+Example:
+<sop>
+1. Prepare dataset
+2. Preprocess dataset
+3. Split the dataset into training set, testing set and validation set
+4. Select your model. 
+5. You can train a new model from scratch.
+6. You can also choose a pretrained model to finetune.
+7. Fit the model with training dataset
+8. Evaluate the model on validation set
+9. If result improves, save the model checkpoint and continue training
+10. Stop training if overfit
+11. If you don't have dataset, you can look for open-source dataset or generate synthetic data
+</sop>
+\`\`\`mermaid
+graph TD
+1["Prepare dataset"]-->2["Preprocess dataset"]
+2-->3["Split the dataset into training set, testing set and validation set"]
+3-->4["Select model"]
+4-->5["Train a new model"]
+4-->6["Choose a pretrained model"]
+5-->7["Fit the model with training dataset"]
+6-->7
+7-->8["Evaluate the model on validation set"]
+8-->|"Result Improves"|9["Save the model checkpoint"]
+9-->7
+8-->|"Overfit"|10["Stop Training"]
+1-->11["No dataset"]-->12["Look for open-source dataset"]
+11-->13["generate synthetic data"]
+12-->3
+13-->3
+\`\`\`
+-------------------------
+<sop>
+${sop}
+</sop>
+    `
+}

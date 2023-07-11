@@ -1,5 +1,5 @@
 import { getOpenAIResponse } from "./openai";
-import { mainpointsPrompt, QGPrompt, keywordsPrompt, definitionPrompt, clozeParagraphPrompt, clozePrompt, sopPrompt } from "./prompt.js";
+import { mainpointsPrompt, QGPrompt, keywordsPrompt, definitionPrompt, clozeParagraphPrompt, clozePrompt, sopPrompt, diagramPrompt } from "./prompt.js";
 import { getFunctions } from "./functions.js";
 import XRegExp from "xregexp";
 
@@ -15,7 +15,7 @@ export async function generateQuiz(input, language = "en-us", task) {
     if (input.length > 1500) {
         input = input.slice(0, 1500);
     }
-    if (task === "mainpoints" || task === "keywords" || task === "SOP") {
+    if (task === "mainpoints" || task === "keywords" || task === "SOP" || task === "diagram") {
         return await extractContext(input, language, task);
     } else {
         return await getQuestions(input, language, task);
@@ -46,18 +46,24 @@ async function extractContext(input, language = "en-us", task) {
             model: "gpt-3.5-turbo-16k",
             max_tokens: 600,
             presence_penalty: 0.2,
+            temperature: 0.2,
+        };
+    } else if (task === "diagram") {
+        prompt = diagramPrompt(language, input);
+        config = {
+            max_tokens: 500,
         };
     }
     let msg = [{ "role": "user", "content": prompt }];
     let res = await getOpenAIResponse({
         messages: msg,
         max_tokens: 256,
-        temperature: 0.2,
         ...config
     });
-    const result = res.content;
-    if (task === "SOP") return processSOP(result);
+    let result = res.content;
     msg.push({ "role": "assistant", "content": result });
+    if (task === "SOP") result = processSOP(result);
+    else if (task === "diagram") result = processDiagram(result);
     return { result, msg };
 }
 
@@ -196,5 +202,11 @@ function processSOP(sop) {
     const regex = /^\d+\.\s*(.*)/gm;
     const matches = sop.matchAll(regex);
     const result = Array.from(matches, (match) => match[1].trim());
-    return { result };
+    return result;
+}
+
+function processDiagram(diagram) {
+    // ```mermaid{mermaidCode}```
+    const mermaidCode = diagram.match(/```mermaid([\s\S]*?)```/)[1].trim();
+    return mermaidCode;
 }
