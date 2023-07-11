@@ -53,3 +53,68 @@ export function clozePrompt(language) {
         with each keyword above, write a summary sentence that contains the keyword. Use language: ${language}
     `;
 }
+
+export function sopPrompt(language, passage) {
+    return `
+Given the article:
+<Start of the article>
+This is Kenji Lopez Alt,
+and I'm going to read you a passage from Marco Pierre White's book The Devil in the kitchen.
+Visualize the fried egg.
+Do you want it to be burned around the edges?
+Do you want to see craters on the egg whites?
+The answer to these questions should be no.
+Yet the majority of people still crack an egg and drop it into searingly hot oil or fat and continue to cook it on high heat.
+The result is an inedible destruction of that great ingredient,
+the egg. Maybe that's how you like it,
+in which case carry on serving your disgusting food.
+Marco then goes on to explain how he actually fries an egg so he melts butter at a very low.
+Temperature then slides the egg into it,
+and if the egg makes any noise at all,
+that means that the pan is too hot.
+What you end up is is sort of these picture perfect,
+the type of eggs that the egg board wants you to see.
+No color around the whites and a perfectly smooth surface.
+I don't like my fried eggs this way.
+I think people who do just can't admit that they want poached eggs and hollandaise,
+and you might as well just eat that.
+When I'm frying my egg,
+I actually wanted to taste fried.
+Now I'm showing you this technique.
+Used plenty of oil in a very hot pan.
+I'm using carbon steel here,
+but you can use cast iron or nonstick,
+and once you slide the into the pan,
+you kind of tilt the pan up towards you and spoon that hot fat all over it all around the whites,
+which are kind of cooking the egg from both sides so that it cooks really,
+really quickly,
+just about 45 seconds to a minute or so.
+So the inside of the egg remains really nice and tender,
+while the outside gets a nice crisp brown texture.
+And to me that is the superior way to fry eggs.
+It actually tastes fried and you get that textural contrast and that flavor contrast.
+And of course you still get that nice soft creamy yolk.
+Make sure you check out the description below for a link to the recipe on serious eats.
+Now if you happen to like serving your eggs picture perfect and pure white with no texture at all,
+you can just carry on serving your disgusting food.
+<End of the article>
+
+and I List steps introduced in the article above chronologically in language en:
+<Start of the output>
+1. Heat plenty of oil in a very hot pan.
+2. Use carbon steel, cast iron, or nonstick pan.
+3. Crack the egg into the hot oil.
+4. Tilt the pan towards you and spoon the hot oil over the egg whites.
+5. Cook for about 45 seconds to a minute.
+6. The inside of the egg should remain tender while the outside gets a nice crisp brown texture.
+7. Serving the egg
+<End of the output>
+
+List steps introduced in the following article chronologically in language ${language}, each step must be a short instruction like in wikihow:
+<Start of the article>
+${passage}
+<End of the article>
+
+<Start of the output>
+    `;
+}

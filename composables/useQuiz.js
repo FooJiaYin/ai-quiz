@@ -6,7 +6,8 @@ const tasks = [
 	'TF',
 	'keywords',
 	'definition',
-	'cloze'
+	'cloze',
+	'SOP'
 ];
 
 export const useQuiz = defineStore('quiz', {
@@ -20,7 +21,8 @@ export const useQuiz = defineStore('quiz', {
 			TF: [],
 			keywords: '',
 			definition: [],
-			cloze: []
+			cloze: [],
+			SOP: [],
 		};
 	},
 	actions: {
