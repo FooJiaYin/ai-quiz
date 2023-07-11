@@ -32,7 +32,7 @@ import draggable from "vuedraggable";
 const quiz = useQuiz();
 // Copy quiz.SOP and shuffle it
 const shuffledSOP = ref(quiz.SOP.slice().sort(() => Math.random() - 0.5));
-const state = ref(quiz.SOP.map(() => "drag-item"));
+const state = ref(Array(quiz.SOP.length).fill("drag-item"));
 
 function submit() {
     // Compare the shuffledSOP with the original quiz.SOP

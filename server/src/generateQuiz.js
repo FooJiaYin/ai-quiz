@@ -207,6 +207,22 @@ function processSOP(sop) {
 
 function processDiagram(diagram) {
     // ```mermaid{mermaidCode}```
-    const mermaidCode = diagram.match(/```mermaid([\s\S]*?)```/)[1].trim();
-    return mermaidCode;
+    let mermaidCode = diagram.match(/```mermaid([\s\S]*?)```/)[1].trim();
+    // ["{step}"]
+    const steps = mermaidCode.match(/\[([\s\S]*?)\]/g);
+    // Random select some steps
+    const numSelected = Math.ceil(Math.random() * steps.length / 2);
+    let selectedSteps = [];
+    for (let i = 0; i < numSelected; i++) {
+        const index = Math.floor(Math.random() * steps.length);
+        if (!selectedSteps.includes(index)) selectedSteps.push(index);
+    }
+    selectedSteps.sort((a, b) => a - b);
+    // Replace selected steps with ___(index)___
+    for (let i = 0; i < selectedSteps.length; i++) {
+        const step = steps[selectedSteps[i]];
+        mermaidCode = mermaidCode.replace(step, `["___(${i + 1})___"]:::blank`);
+        selectedSteps[i] = step.replace(/[\["''"\]]/g, "")
+    }
+    return { question: mermaidCode, answers: selectedSteps };
 }
