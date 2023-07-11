@@ -23,6 +23,16 @@ export const useQuiz = defineStore('quiz', {
 			definition: [],
 			cloze: [],
 			SOP: [],
+			diagram: `
+	graph TD
+	1["Insert tension wrench into the lock"]-->2["Turn tension wrench in likely direction"]
+	2-->3["Insert rake into the lock"]
+	3-->4["Push and pull the rake, twisting and working by feel"]
+	4-->5["Feel for key pin to reach shear line"]
+	5-->6["Twist tension wrench in correct direction to open lock"]
+	1-->7["Use paper clips"]
+	classDef answer fill:#fff,height:36px,stroke:#000,font-weight:bold,text-decoration:underline;
+					  `
 		};
 	},
 	actions: {

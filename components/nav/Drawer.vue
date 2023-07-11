@@ -9,6 +9,7 @@
             <NavLink v-if="quiz['cloze'].length > 0" link="/cloze" title="Cloze Quiz"></NavLink>
             <NavLink v-if="quiz['SOP'].length > 0" link="/sop" title="SOP"></NavLink>
             <NavLink v-if="quiz['SOP'].length > 0" link="/sort-sop" title="Sort SOP"></NavLink>
+            <NavLink v-if="quiz['diagram'].length > 0" link="/sop-diagram" title="SOP Diagram"></NavLink>
         </v-list>
     </v-navigation-drawer>
 </template>
