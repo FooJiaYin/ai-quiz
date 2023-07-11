@@ -37,6 +37,7 @@ async function extractContext(input, language = "en-us", task) {
     } else if (task === "keywords") {
         prompt = keywordsPrompt(language, input);
         config = {
+            model: "gpt-4",
             max_tokens: 100,
             presence_penalty: 1.0,
         };
