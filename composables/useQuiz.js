@@ -6,7 +6,9 @@ const tasks = [
 	'TF',
 	'keywords',
 	'definition',
-	'cloze'
+	'cloze',
+	'SOP',
+	'diagram'
 ];
 
 export const useQuiz = defineStore('quiz', {
@@ -20,10 +22,13 @@ export const useQuiz = defineStore('quiz', {
 			TF: [],
 			keywords: '',
 			definition: [],
-			cloze: []
+			cloze: [],
+			SOP: [],
+			diagram: "",
 		};
 	},
 	actions: {
+		// TODO: Retry failed requests
 		// since we rely on `this`, we cannot use an arrow function
 		async generateQuiz(transcript, language) {
 			// Prevent resending requests while generating quiz
@@ -58,12 +63,16 @@ export const useQuiz = defineStore('quiz', {
 						if (input == undefined) throw new Error('Keywords not generated');
 					}
 
+					if (task === "diagram") {
+						input = this.messages.SOP[1].content;
+					}
+
 					const res = await $fetch('/api/quiz', {
 						method: 'POST', body: { input, language, task }
 					});
 
 					// Save messages for later tasks
-					if (task === 'mainpoints' || task === "keywords") {
+					if (task === 'mainpoints' || task === "keywords" || task === 'SOP') {
 						this.messages[task] = res.msg;
 					}
 					// Split cloze questions by '___' to render the inline blank

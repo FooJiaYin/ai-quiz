@@ -1,9 +1,9 @@
 import { getOpenAIResponse } from "./openai";
-import { mainpointsPrompt, QGPrompt, keywordsPrompt, definitionPrompt, clozeParagraphPrompt, clozePrompt } from "./prompt.js";
+import { mainpointsPrompt, QGPrompt, keywordsPrompt, definitionPrompt, clozeParagraphPrompt, clozePrompt, sopPrompt, diagramPrompt } from "./prompt.js";
 import { getFunctions } from "./functions.js";
 import XRegExp from "xregexp";
 
-const wordBoundary = "[\\p{Katakana}\\p{Bopomofo}\\p{Hiragana}\\p{Han}\\p{Hangul}\\p{Khmer}\\p{Lao}\\p{Myanmar}\\p{Ogham}\\p{Thai}\\p{Tibetan}\\p{Punctuation}]|\\b|^|$" 
+const wordBoundary = "[\\p{Katakana}\\p{Bopomofo}\\p{Hiragana}\\p{Han}\\p{Hangul}\\p{Khmer}\\p{Lao}\\p{Myanmar}\\p{Ogham}\\p{Thai}\\p{Tibetan}\\p{Punctuation}]|\\b|^|$";
 
 /**
  * Generate a quiz from a passage for given task
@@ -15,7 +15,7 @@ export async function generateQuiz(input, language = "en-us", task) {
     if (input.length > 1500) {
         input = input.slice(0, 1500);
     }
-    if (task === "mainpoints" || task === "keywords") {
+    if (task === "mainpoints" || task === "keywords" || task === "SOP" || task === "diagram") {
         return await extractContext(input, language, task);
     } else {
         return await getQuestions(input, language, task);
@@ -30,23 +30,40 @@ export async function generateQuiz(input, language = "en-us", task) {
  */
 async function extractContext(input, language = "en-us", task) {
     // Get main points
-    let prompt, max_tokens = 256, presence_penalty = 0.0;
+    let config = {};
+    let prompt;
     if (task === "mainpoints") {
         prompt = mainpointsPrompt(language, input);
-    } else {
+    } else if (task === "keywords") {
         prompt = keywordsPrompt(language, input);
-        max_tokens = 100;
-        presence_penalty = 1.0;
+        config = {
+            max_tokens: 100,
+            presence_penalty: 1.0,
+        };
+    } else if (task === "SOP") {
+        prompt = sopPrompt(language, input);
+        config = {
+            model: "gpt-3.5-turbo-16k",
+            max_tokens: 600,
+            presence_penalty: 0.2,
+            temperature: 0.2,
+        };
+    } else if (task === "diagram") {
+        prompt = diagramPrompt(language, input);
+        config = {
+            max_tokens: 500,
+        };
     }
-    let msg = [{ "role": "system", "content": prompt }];
+    let msg = [{ "role": "user", "content": prompt }];
     let res = await getOpenAIResponse({
-        model: "gpt-3.5-turbo",
         messages: msg,
-        max_tokens,
-        presence_penalty,
+        max_tokens: 256,
+        ...config
     });
-    const result = res.content;
+    let result = res.content;
     msg.push({ "role": "assistant", "content": result });
+    if (task === "SOP") result = processSOP(result);
+    else if (task === "diagram") result = processDiagram(result);
     return { result, msg };
 }
 
@@ -171,4 +188,41 @@ function processCloze(clozeList) {
     // Shuffle result
     result.sort(() => Math.random() - 0.5);
     return { result };
+}
+
+/**
+ * Post-process SOP (convert markdown list to array)
+ * @param {string} sop 
+ * @returns 
+ * @example 
+ * input = "<start>\n1.  first line\n2.second line\n3. third line\n<EOF>" 
+ * processSOP(input) // {result: ["first line", "second line", "third line"]}
+ */
+function processSOP(sop) {
+    const regex = /^\d+\.\s*(.*)/gm;
+    const matches = sop.matchAll(regex);
+    const result = Array.from(matches, (match) => match[1].trim());
+    return result;
+}
+
+function processDiagram(diagram) {
+    // ```mermaid{mermaidCode}```
+    let mermaidCode = diagram.match(/```mermaid([\s\S]*?)```/)[1].trim();
+    // ["{step}"]
+    const steps = mermaidCode.match(/\[([\s\S]*?)\]/g);
+    // Random select some steps
+    const numSelected = Math.ceil(Math.random() * steps.length / 2);
+    let selectedSteps = [];
+    for (let i = 0; i < numSelected; i++) {
+        const index = Math.floor(Math.random() * steps.length);
+        if (!selectedSteps.includes(index)) selectedSteps.push(index);
+    }
+    selectedSteps.sort((a, b) => a - b);
+    // Replace selected steps with ___(index)___
+    for (let i = 0; i < selectedSteps.length; i++) {
+        const step = steps[selectedSteps[i]];
+        mermaidCode = mermaidCode.replace(step, `["___(${i + 1})___"]:::blank`);
+        selectedSteps[i] = step.replace(/[\["''"\]]/g, "")
+    }
+    return { question: mermaidCode, answers: selectedSteps };
 }
