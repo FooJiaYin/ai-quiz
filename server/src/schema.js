@@ -18,9 +18,13 @@ export default {
       "answer": {
         "type": "string",
         "description": "the correct answer, must be one of the options",
-      }
+      },
+      "difficulty": {
+        "type": "string",
+        "description": "the difficulty of the question in english, must be one of Easy, Medium, Hard",
+      },
     },
-    "required": ["question", "options", "answer"]
+    "required": ["question", "options", "answer", "difficulty"]
   },
   "TF": {
     "type": "object",
@@ -31,8 +35,12 @@ export default {
       "false_statement": {
         "type": "string"
       },
+      "difficulty": {
+        "type": "string",
+        "description": "the difficulty to distinguish the true and false statement in english, must be one of Easy, Medium, Hard",
+      },
     },
-    "required": ["true_statement", "false_statement"],
+    "required": ["true_statement", "false_statement", "difficulty"],
   },
   "definition": {
     "type": "object",
@@ -43,9 +51,13 @@ export default {
       "definition": {
         "type": "string",
         "description": "the definition of the keyword without the keyword itself"
-      }
+      },
+      "difficulty": {
+        "type": "string",
+        "description": "the difficulty to match the keyword and definition in english, must be one of Easy, Medium, Hard",
+      },
     },
-    "required": ["keyword", "definition"]
+    "required": ["keyword", "definition", "difficulty"]
   },
   "cloze": {
     "type": "object",
@@ -57,7 +69,11 @@ export default {
         "type": "string",
         "description": "summary sentence that contain the keyword",
       },
+      "difficulty": {
+        "type": "string",
+        "description": "the difficulty to match the keyword and sentence in english, must be one of Easy, Medium, Hard",
+      },
     },
-    "required": ["keyword", "sentence"]
+    "required": ["keyword", "sentence", "difficulty"]
   }
 };

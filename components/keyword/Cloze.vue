@@ -3,6 +3,7 @@
         <KeywordBlank v-for="(part, i) in q.question" :text="part" :answer="q.answer" 
             @update="(val) => value=val" :clozeValue="value"
             :hideBlank="i == q.question.length - 1" :key="i" ref="blanks" />
+        <Difficulty :level="q.difficulty" />
     </li>
 </template>
 

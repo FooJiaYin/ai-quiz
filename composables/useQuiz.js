@@ -77,9 +77,9 @@ export const useQuiz = defineStore('quiz', {
 					}
 					// Split cloze questions by '___' to render the inline blank
 					if (task == 'cloze') {
-						res.result = res.result.map(({ question, answer }) => ({
+						res.result = res.result.map(({ question, answer, difficulty }) => ({
 							question: question.split('___'),
-							answer
+							answer, difficulty
 						}));
 					}
 					this[task] = res.result;

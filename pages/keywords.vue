@@ -2,12 +2,14 @@
     <v-row>
         <v-col>
             <v-container>
-                <v-row v-for="({ keyword, definition }, index) in quiz['definition']">
+                <v-row v-for="({ keyword, definition, difficulty }, index) in quiz['definition']">
                     <v-col cols="auto">
                         <KeywordBlank :answer="keyword" ref="blanks" />
                     </v-col>
                     <v-col>
-                        <p>{{ definition }}</p>
+                        <p>{{ definition }}
+                            <Difficulty :level="difficulty" />
+                        </p>
                     </v-col>
                 </v-row>
                 <CenterButton class="mt-10" @click="reset">Try Again</CenterButton>

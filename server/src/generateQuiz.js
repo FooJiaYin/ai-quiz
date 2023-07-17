@@ -121,19 +121,19 @@ function processQuestions(questions, task) {
     let result = [];
     for (let q of questions) {
         if (task === "MC") {
-            const { question, answer, options } = q;
+            const { question, answer, options, difficulty } = q;
             // Shuffle options
             options.sort(() => Math.random() - 0.5);
             result.push({
-                question, options,
+                question, options, difficulty,
                 "answerId": options.indexOf(answer)
             });
         } else {
-            const { true_statement, false_statement } = q;
+            const { true_statement, false_statement, difficulty } = q;
             // randomly select true or false, then output {"statement": "string", "answer": "string, True or false"}
             const question = Math.random() < 0.5 ? true_statement : false_statement;
             result.push({
-                question,
+                question, difficulty,
                 "options": ["True", "False"],
                 "answerId": question === true_statement ? 0 : 1,
                 "reason": true_statement
@@ -149,12 +149,12 @@ function processQuestions(questions, task) {
  */
 function processDefinition(definitions) {
     const result = [];
-    for (let { keyword, definition } of definitions) {
+    for (let { keyword, definition, difficulty } of definitions) {
         // Match whole word case insensitively
         const pattern = XRegExp(`(${wordBoundary})${keyword}(${wordBoundary})`, "gi");
         // Remove keyword from definition
         definition = definition.replace(pattern, "$1$2");
-        result.push({ keyword, definition });
+        result.push({ keyword, definition, difficulty });
     }
     return { result };
 }
@@ -169,7 +169,7 @@ function processCloze(clozeList) {
     const sentenceList = []; // in lowercase
     const processedClozes = [];
     const result = [];
-    for (let { keyword, sentence } of clozeList) {
+    for (let { keyword, sentence, difficulty } of clozeList) {
         // Case insensitive match
         if (!sentence.toLowerCase().includes(keyword.toLowerCase()) && !sentence.includes("_")) continue;
         const completeSentence = sentence.replace("_", keyword).toLowerCase();
@@ -183,7 +183,7 @@ function processCloze(clozeList) {
         if (!sentenceList.includes(completeSentence) && !processedClozes.includes(clozeSentence.toLowerCase())) {
             sentenceList.push(completeSentence);
             processedClozes.push(clozeSentence.toLowerCase());
-            result.push({ question: clozeSentence, answer: keyword });
+            result.push({ question: clozeSentence, answer: keyword, difficulty });
         }
     }
     // Shuffle result

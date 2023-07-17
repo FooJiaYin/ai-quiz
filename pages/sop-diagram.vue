@@ -5,6 +5,7 @@
         <div class="d-flex">
             {{ i + 1 }}.
             <input variant="outlined" v-model="answers[i]" />
+            <!-- TODO: Add difficulty level -->
         </div>
         <p class="text-center text-success" v-if="showAnswers">{{ answer }}</p>
     </div>
