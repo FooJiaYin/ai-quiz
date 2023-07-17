@@ -90,6 +90,8 @@ npm run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-Note: Please make sure your deployment platform has sufficient timeout limit for the quiz generation API call. 
-
-For example, free plan of [Vercel](https://vercel.com/) and [Netlify](https://www.netlify.com/) are **not recommended** for this project as they have a 10s timeout limit for serverless functions. The quiz generation process may take longer than 10s. 
+> ***Note***: Please make sure your deployment platform has sufficient timeout limit for the quiz generation API call. 
+> 
+> For example, free plan of [Vercel](https://vercel.com/) and [Netlify](https://www.netlify.com/) are **not recommended** for this project as they have a 10s timeout limit for serverless functions. The quiz generation process may take longer than 10s. 
+> 
+> [Render](https://render.com/), [Heroku](https://www.heroku.com/), [Railway](https://railway.app/), [DigitalOcean](https://www.digitalocean.com/), [AWS](https://aws.amazon.com/), [Azure](https://azure.microsoft.com/), [Google Cloud](https://cloud.google.com/) are recommended for deployment.
