@@ -3,7 +3,7 @@ AI Quiz Generation
 
 Demonstration of quiz generation using OpenAI's GPT-3.5 API.
 
-Demo link: https://deephow-ai-quiz.onrender.com/
+Demo link: https://deephow-ai-quiz-nn0q.onrender.com
 
 Features
 --------
