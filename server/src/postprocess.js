@@ -54,6 +54,9 @@ export function processDefinition(definitions) {
  * 1. Remove duplicate sentences
  * 2. Remove keywords with unified blank format
  * @param {[{keyword, sentence}]} clozeList 
+ * @example
+ * input = [{keyword: "keyword", sentence: "sentence"}, {keyword: "keyword", sentence: "sentence"}]
+ * processCloze(input) // {result: [{question: "sentence", answer: "keyword"}]}
  */
 export function processCloze(clozeList) {
     const sentenceList = []; // in lowercase
@@ -81,9 +84,20 @@ export function processCloze(clozeList) {
     return { result };
 }
 
+/**
+ * Post-process cloze paragraph
+ * 1. Replace keywords with '___'
+ * 2. Sort keywords by position
+ * @param {keywords, paragraph} 
+ * @example
+ * input = {keywords: ["keyword2", "keyword1", "keyword3"], paragraph: "sentence1 keyword1 sentence2 keyword2 sentence3"}
+ * processClozeParagraph(input) 
+ * // {result: {question: "sentence1 ___ sentence2 ___ sentence3", answers: ["keyword1", "keyword2"]}} 
+ */
 export function processClozeParagraph({ keywords, paragraph }) {
     let answers = [];
     let answersPosition = [];
+    console.log(keywords)
     for (let keyword of keywords) {
         // Replace only the first occurrence
         const pattern = new RegExp(keyword, "i");
@@ -116,6 +130,15 @@ export function processSOP(sop) {
     return result;
 }
 
+/**
+ * 1. Randomly select some steps
+ * 2. Replace selected steps with `___(index)___`
+ * @param {string} diagram 
+ * @example
+ * input = "```mermaid\ngraph TD\nA[Christmas] -->|Get money| B(Go shopping)\nB --> C{Let me think}\nC -->|One| D[Laptop]\nC -->|Two| E[iPhone]\nC -->|Three| F[Car]\n```"
+ * processDiagram(input) 
+ * // {question: "```mermaid\ngraph TD\n["___(1)___"]:::blank -->|Get money| ["___(2)___"]:::blank\n["___(2)___"]:::blank --> ["___(3)___"]:::blank{Let me think}\n["___(3)___"]:::blank -->|One| ["___(4)___"]:::blank[Laptop]\n["___(3)___"]:::blank -->|Two| ["___(5)___"]:::blank[iPhone]\n["___(3)___"]:::blank -->|Three| ["___(6)___"]:::blank[Car]\n```", answers: ["A", "B", "C", "D", "E", "F"]}
+ */
 export function processDiagram(diagram) {
     // ```mermaid{mermaidCode}```
     let mermaidCode = diagram.match(/```mermaid([\s\S]*?)```/)[1].trim();
