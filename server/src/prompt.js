@@ -17,7 +17,7 @@ export function mainpointsPrompt(language, passage, n) {
     return `
         '''${passage}'''
 
-        list ${n ?? ''} main points in this passage in language: ${language} 
+        list ${n ?? 'about 5-10'} main points in this passage in language: ${language} 
     `;
 }
 
