@@ -14,5 +14,6 @@ function reset() {
     for (let i = 0; i < props.q.question.length; i++) {
         value.value = "";
     }
+    blanks.value.forEach(blank => blank.reset());
 }
 </script>
