@@ -16,7 +16,7 @@
 const props = defineProps(['data']);
 const draggables = ref(null);
 // Shuffle the keywords
-const keywords = props.data.sort(() => Math.random() - 0.5);
+const keywords = props.data.slice().sort(() => Math.random() - 0.5);
 
 defineExpose({ reset });
 
