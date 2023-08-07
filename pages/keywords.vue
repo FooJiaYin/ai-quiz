@@ -27,9 +27,7 @@ const blanks = ref(null);
 const keywords = ref(null);
 
 function reset() {
-    for (let i = 0; i < quiz['definition'].length; i++) {
-        blanks.value[i].reset();
-    }
+    blanks.value.forEach(blank => blank.reset());
     keywords.value.reset();
 }
 </script>

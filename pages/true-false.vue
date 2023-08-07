@@ -14,8 +14,6 @@ const h3 = ref(null);
 const options = ref(null);
 
 function reset() {
-    for (let i = 0; i < quiz['TF'].length; i++) {
-        options.value[i].reset();
-    }
+    options.value.forEach(option => option.reset());
 }
 </script>

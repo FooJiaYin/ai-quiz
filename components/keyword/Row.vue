@@ -21,8 +21,6 @@ const keywords = props.data.slice().sort(() => Math.random() - 0.5);
 defineExpose({ reset });
 
 function reset() {
-    for (let i = 0; i < keywords.length; i++) {
-        draggables.value[i].hide(false);
-    }
+    draggables.value.forEach(draggable => draggable.hide(false));
 }
 </script>

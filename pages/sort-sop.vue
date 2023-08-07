@@ -47,9 +47,7 @@ function submit() {
 
 function reset() {
     // Reset the state
-    for (let i = 0; i < quiz.SOP.length; i++) {
-        state.value[i] = "drag-item";
-    }
+    state.value.fill("drag-item");
     // Shuffle the SOP again
     shuffledSOP.value.sort(() => Math.random() - 0.5);
 }

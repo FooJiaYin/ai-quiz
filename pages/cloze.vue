@@ -23,9 +23,7 @@ const clozes = ref(null);
 const keywords = ref(null);
 
 function reset() {
-    for (let i = 0; i < quiz['cloze'].length; i++) {
-        clozes.value[i].reset();
-    }
+    clozes.value.forEach(cloze => cloze.reset());
     keywords.value.reset();
 }
 </script>

@@ -11,9 +11,7 @@ const value = ref("");
 defineExpose({ reset });
 
 function reset() {
-    for (let i = 0; i < props.q.question.length; i++) {
-        value.value = "";
-    }
+    value.value = "";
     blanks.value.forEach(blank => blank.reset());
 }
 </script>
