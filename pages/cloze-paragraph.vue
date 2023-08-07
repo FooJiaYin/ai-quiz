@@ -2,17 +2,12 @@
     <v-row>
         <v-col>
             <v-container>
-                <ol>
-                    <li v-for="q in quiz['cloze']">
-                        <KeywordCloze :q="q" class="my-5" ref="clozes" />
-                        <Difficulty :level="q.difficulty" />
-                    </li>
-                </ol>
+                <KeywordCloze :q="quiz['clozeParagraph']" class="my-5" ref="clozes" />
                 <CenterButton class="mt-10" @click="reset">Try Again</CenterButton>
             </v-container>
         </v-col>
         <v-col cols="1">
-            <KeywordRow :data="quiz['cloze'].map(({ answer }) => answer)" ref="keywords" />
+            <KeywordRow :data="quiz['clozeParagraph'].answers" ref="keywords" />
         </v-col>
     </v-row>
 </template>
@@ -23,7 +18,7 @@ const clozes = ref(null);
 const keywords = ref(null);
 
 function reset() {
-    clozes.value.forEach(cloze => cloze.reset());
+    clozes.value.reset();
     keywords.value.reset();
 }
 </script>

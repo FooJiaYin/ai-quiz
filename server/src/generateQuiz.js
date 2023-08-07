@@ -77,7 +77,7 @@ async function getQuestions(input, language = "en-us", task = "MC") {
         req = definitionPrompt(language);
     } else if (task === "cloze") {
         req = clozePrompt(language);
-    } else {
+    } else if (task === "clozeParagraph") {
         req = clozeParagraphPrompt(language);
     }
     msg.push({ "role": "system", "content": req });
@@ -91,10 +91,12 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     try {
         if (task === "MC" || task === "TF") {
             return processQuestions(res.function_call.arguments.result, task);
+        } else if (task === "definition") {
+            return processDefinition(res.function_call.arguments.result);
         } else if (task === "cloze") {
             return processCloze(res.function_call.arguments.result);
-        } else {
-            return processDefinition(res.function_call.arguments.result);
+        } else if (task === "clozeParagraph") {
+            return processClozeParagraph(res.function_call.arguments.result);
         }
     } catch (error) {
         error.message = `Error processing response result: ${error.message}`;
@@ -179,6 +181,22 @@ function processCloze(clozeList) {
     // Shuffle result
     result.sort(() => Math.random() - 0.5);
     return { result };
+}
+
+function processClozeParagraph({ keywords, paragraph }) {
+    let answers = [];
+    let answersPosition = [];
+    for (let keyword of keywords) {
+        // Replace only the first occurrence
+        const pattern = new RegExp(keyword, "i");
+        // search for the first occurrence of keyword
+        const index = paragraph.search(pattern);
+        if (index == -1) continue;
+        paragraph = paragraph.replace(pattern, `___`);
+        // paragraph = paragraph.replace(pattern, `___(${keyword})`);
+        paragraph = paragraph.replace(/<|>/g, "");
+    }
+    return { result: paragraph };
 }
 
 /**
