@@ -75,5 +75,20 @@ export default {
       },
     },
     "required": ["keyword", "sentence", "difficulty"]
+  },
+  "clozeParagraph": {
+    "type": "object",
+    "properties": {
+      "paragraph": {
+        "type": "string"
+      },
+      "keywords": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": ["paragraph", "keywords"]
   }
 };

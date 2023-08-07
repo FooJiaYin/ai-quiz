@@ -7,6 +7,7 @@ const tasks = [
 	'keywords',
 	'definition',
 	'cloze',
+	'clozeParagraph',
 	'SOP',
 	'diagram'
 ];
@@ -23,6 +24,7 @@ export const useQuiz = defineStore('quiz', {
 			keywords: '',
 			definition: [],
 			cloze: [],
+			clozeParagraph: {},
 			SOP: [],
 			diagram: "",
 		};
@@ -54,11 +56,12 @@ export const useQuiz = defineStore('quiz', {
 
 				let input = transcript;
 				try {
+					// Pre-process messages
 					if (task === 'MC' || task === 'TF') {
 						input = this.messages.mainpoints;
 						if (input == undefined) throw new Error('Main points not generated');
 					}
-					if (task === 'cloze' || task === 'definition') {
+					if (task === 'cloze' || task === 'definition' || task === "clozeParagraph") {
 						input = this.messages.keywords;
 						if (input == undefined) throw new Error('Keywords not generated');
 					}
@@ -67,6 +70,7 @@ export const useQuiz = defineStore('quiz', {
 						input = this.messages.SOP[1].content;
 					}
 
+					// Send request
 					const res = await $fetch('/api/quiz', {
 						method: 'POST', body: { input, language, task }
 					});

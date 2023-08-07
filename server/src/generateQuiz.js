@@ -77,7 +77,7 @@ async function getQuestions(input, language = "en-us", task = "MC") {
         req = definitionPrompt(language);
     } else if (task === "cloze") {
         req = clozePrompt(language);
-    } else {
+    } else if (task === "clozeParagraph") {
         req = clozeParagraphPrompt(language);
     }
     msg.push({ "role": "system", "content": req });
