@@ -1,7 +1,7 @@
 <template>
     <h3 class="mb-4" ref="form">Input transcript</h3>
     <v-textarea label="Insert transcript here" v-model="input" variant="outlined" rows="20" clearable
-        class="mb-4" :maxlength="2000" counter persistent-counter 
+        class="mb-4" :maxlength="8000" counter persistent-counter 
         :readonly="quiz.status.includes('...')"></v-textarea>
     <v-text-field label="Language" v-model="language" variant="outlined"></v-text-field>
     <CenterButton @click="generateQuiz">Generate Quiz</CenterButton>

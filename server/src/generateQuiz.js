@@ -12,9 +12,6 @@ const wordBoundary = "[\\p{Katakana}\\p{Bopomofo}\\p{Hiragana}\\p{Han}\\p{Hangul
  * @param {string} task: "MC", "TF", "cloze", "definition", "mainpoints" or "keywords" 
  */
 export async function generateQuiz(input, language = "en-us", task) {
-    if (input.length > 1500) {
-        input = input.slice(0, 1500);
-    }
     if (task === "mainpoints" || task === "keywords" || task === "SOP" || task === "diagram") {
         return await extractContext(input, language, task);
     } else {
@@ -38,27 +35,20 @@ async function extractContext(input, language = "en-us", task) {
         prompt = keywordsPrompt(language, input);
         config = {
             model: "gpt-4",
-            max_tokens: 100,
             presence_penalty: 1.0,
         };
     } else if (task === "SOP") {
         prompt = sopPrompt(language, input);
         config = {
-            model: "gpt-3.5-turbo-16k",
-            max_tokens: 600,
             presence_penalty: 0.2,
             temperature: 0.2,
         };
     } else if (task === "diagram") {
         prompt = diagramPrompt(language, input);
-        config = {
-            max_tokens: 500,
-        };
     }
     let msg = [{ "role": "user", "content": prompt }];
     let res = await getOpenAIResponse({
         messages: msg,
-        max_tokens: 256,
         ...config
     });
     let result = res.content;
@@ -223,7 +213,7 @@ function processDiagram(diagram) {
     for (let i = 0; i < selectedSteps.length; i++) {
         const step = steps[selectedSteps[i]];
         mermaidCode = mermaidCode.replace(step, `["___(${i + 1})___"]:::blank`);
-        selectedSteps[i] = step.replace(/[\["''"\]]/g, "")
+        selectedSteps[i] = step.replace(/[\["''"\]]/g, "");
     }
     return { question: mermaidCode, answers: selectedSteps };
 }
