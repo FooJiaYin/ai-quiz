@@ -1,10 +1,7 @@
 <template>
-    <li>
-        <KeywordBlank v-for="(part, i) in q.question" :text="part" :answer="q.answer" 
-            @update="(val) => value=val" :clozeValue="value"
-            :hideBlank="i == q.question.length - 1" :key="i" ref="blanks" />
-        <Difficulty :level="q.difficulty" />
-    </li>
+    <KeywordBlank v-for="(part, i) in q.question" :text="part" :answer="q.answer ?? q.answers[i]"
+        @update="(val) => value=val" :clozeValue="q.answer ? value : ''" 
+        :hideBlank="i == q.question.length - 1" :key="i" ref="blanks" />
 </template>
 
 <script setup>

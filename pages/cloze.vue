@@ -3,7 +3,10 @@
         <v-col>
             <v-container>
                 <ol>
-                    <KeywordCloze v-for="q in quiz['cloze']" :q="q" class="my-5" ref="clozes" />
+                    <li v-for="q in quiz['cloze']">
+                        <KeywordCloze :q="q" class="my-5" ref="clozes" />
+                        <Difficulty :level="q.difficulty" />
+                    </li>
                 </ol>
                 <CenterButton class="mt-10" @click="reset">Try Again</CenterButton>
             </v-container>
