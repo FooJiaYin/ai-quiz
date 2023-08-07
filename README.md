@@ -16,6 +16,7 @@ Features
     - True/false questions
     - Keywords and definition matching
     - Cloze questions
+    - Cloze paragraph questions
     - Sort SOP steps
     - Fill in the blanks in SOP diagram
 
