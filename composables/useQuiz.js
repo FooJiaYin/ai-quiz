@@ -86,6 +86,11 @@ export const useQuiz = defineStore('quiz', {
 							answer, difficulty
 						}));
 					}
+
+					if (task == 'clozeParagraph') {
+						res.result.question = res.result.question.split('___');
+					}
+
 					this[task] = res.result;
 				} catch (error) {
 					let message = error.message;
