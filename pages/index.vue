@@ -5,11 +5,7 @@
         :readonly="quiz.status.includes('...')"></v-textarea>
     <v-text-field label="Language" v-model="quiz.language" variant="outlined"></v-text-field>
     <CenterButton @click="generateQuiz">Generate Quiz</CenterButton>
-    <div class="mt-3 text-center">
-        <p v-for="message in [...quiz.errors, quiz.status]" :class="statusColor(message)">
-            {{ message }}
-        </p>
-    </div>
+    <StatusMessage />
 </template>
 
 <script setup>
