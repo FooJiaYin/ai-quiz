@@ -11,6 +11,7 @@
             </v-btn>
         </v-row>
     </div>
+    <StatusMessage />
 </template>
 
 <style>
