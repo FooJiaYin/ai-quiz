@@ -6,6 +6,9 @@
 import showdown from "showdown";
 const props = defineProps(['src']);
 const converter = new showdown.Converter();
-const html = ref("<p></p>");
-html.value = converter.makeHtml(props.src);
+const html = ref(converter.makeHtml(props.src));
+
+watch(() => props.src, () => {
+    html.value = converter.makeHtml(props.src);
+});
 </script>
