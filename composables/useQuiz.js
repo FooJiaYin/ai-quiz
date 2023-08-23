@@ -3,13 +3,13 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 const tasks = [
 	'mainpoints',
 	'MC',
-	'TF',
-	'keywords',
-	'definition',
-	'cloze',
-	'clozeParagraph',
-	'SOP',
-	'diagram'
+	// 'TF',
+	// 'keywords',
+	// 'definition',
+	// 'cloze',
+	// 'clozeParagraph',
+	// 'SOP',
+	// 'diagram'
 ];
 
 export const useQuiz = defineStore('quiz', {
@@ -27,23 +27,33 @@ export const useQuiz = defineStore('quiz', {
 			clozeParagraph: {},
 			SOP: [],
 			diagram: "",
+			language: 'en-us',
 		};
 	},
 	actions: {
+		async regenerateTask(tasks) {
+			if (!tasks.includes('mainpoints')) {
+				this.messages.mainpoints[1].content = this.mainpoints;
+			}
+			this.generateQuiz(this.transcript, this.language, tasks);
+		},
+
 		// TODO: Retry failed requests
 		// since we rely on `this`, we cannot use an arrow function
-		async generateQuiz(transcript, language) {
+		async generateQuiz(transcript, language = this.language, selectedTask = []) {
 			// Prevent resending requests while generating quiz
 			if (this.status.includes('...')) return;
 			this.status = 'Loading...';
 			this.errors = [];
 
 			// Retry failed requests only if the input is the same
-			let selectedTask = [...tasks];
-			if (transcript == this.transcript && language == this.language) {
-				selectedTask = selectedTask.filter(task => this[task].length === 0);
-			} else {
-				this.messages = {};
+			if (selectedTask.length === 0) {
+				if (transcript == this.transcript && language == this.language) {
+					selectedTask = selectedTask.filter(task => this[task].length === 0);
+				} else {
+					selectedTask = [...tasks];
+					this.messages = {};
+				}
 			}
 
 			this.transcript = transcript;

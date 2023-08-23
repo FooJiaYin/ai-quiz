@@ -3,7 +3,7 @@
     <v-textarea label="Insert transcript here" v-model="input" variant="outlined" rows="20" clearable
         class="mb-4" :maxlength="8000" counter persistent-counter 
         :readonly="quiz.status.includes('...')"></v-textarea>
-    <v-text-field label="Language" v-model="language" variant="outlined"></v-text-field>
+    <v-text-field label="Language" v-model="quiz.language" variant="outlined"></v-text-field>
     <CenterButton @click="generateQuiz">Generate Quiz</CenterButton>
     <div class="mt-3 text-center">
         <p v-for="message in [...quiz.errors, quiz.status]" :class="statusColor(message)">
@@ -15,7 +15,6 @@
 <script setup>
 const quiz = useQuiz();
 const input = ref(quiz.transcript);
-const language = ref("");
 const status = ref("");
 const statusColor = (message) => 
     message === "Completed!" ? "text-success" :
@@ -23,6 +22,6 @@ const statusColor = (message) =>
     "black";
 
 async function generateQuiz() {
-    await quiz.generateQuiz(input.value, language.value == "" ? "en-us" : language.value);
+    await quiz.generateQuiz(input.value);
 }
 </script>
