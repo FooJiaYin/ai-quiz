@@ -1,14 +1,15 @@
 <template>
     <h2 class="mt-8 mb-4">What will you learn:</h2>
-    <div v-if="isEditing">
-        <v-textarea v-model="quiz.mainpoints" label="Main Points" variant="outlined" rows="15"></v-textarea>
-        <CenterButton @click="isEditing = false; quiz.regenerateTask(['MC'])">Save
-        </CenterButton>
-        <p>When the "Save" button is clicked, the Multiple-choice and True/False questions will be re-generated.</p>
-    </div>
-    <div v-else>
+    <div>
         <Markdown :src="quiz.mainpoints"></Markdown>
-        <CenterButton @click="isEditing = true">Edit</CenterButton>
+        <v-row justify="center">
+            <v-btn color="primary" class="ma-4">Edit
+                <EditDialog title="Edit mainpoints" v-model="quiz.mainpoints" @save="quiz.regenerateTask(['MC'])" />
+            </v-btn>
+            <v-btn color="primary" class="ma-4">Prompt
+                <EditDialog title="Prompt" v-model="quiz.mainpointsPrompt" @save="quiz.generateQuiz()" />
+            </v-btn>
+        </v-row>
     </div>
 </template>
 
@@ -20,5 +21,4 @@ li {
 
 <script setup>
 const quiz = useQuiz();
-const isEditing = ref(false);
 </script>
