@@ -10,7 +10,7 @@ const wordBoundary = "[\\p{Katakana}\\p{Bopomofo}\\p{Hiragana}\\p{Han}\\p{Hangul
 export function processQuestions(questions, task) {
     let result = [];
     for (let q of questions) {
-        if (task === "MC") {
+        if (task.includes("MC")) {
             const { question, answer, options, difficulty } = q;
             // Shuffle options
             options.sort(() => Math.random() - 0.5);

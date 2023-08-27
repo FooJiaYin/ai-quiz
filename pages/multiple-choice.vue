@@ -5,7 +5,13 @@
         </div>
         <MultipleChoiceOptions :q="q" :id="index" ref="options" />
     </div>
-    <CenterButton @click="reset">Try Again</CenterButton>
+    <v-row justify="center">
+        <v-btn color="primary" class="ma-4" @click="reset">Try Again</v-btn>
+        <v-btn color="primary" class="ma-4">Edit with Prompt
+            <EditDialog title="Prompt" v-model="quiz.MCPrompt" @save="quiz.regenerateTask(['MCPrompt'])" />
+        </v-btn>
+    </v-row>
+    <StatusMessage />
 </template>
 
 <script setup>

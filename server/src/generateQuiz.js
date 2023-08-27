@@ -65,7 +65,7 @@ async function extractContext(input, language = "en-us", task) {
 async function getQuestions(input, language = "en-us", task = "MC") {
     // Get questions
     let msg = input;
-    const callbackFunction = getFunctions(task);
+    const callbackFunction = getFunctions(task.split("Prompt")[0]);
 
     // Get prompt
     let req;
@@ -78,7 +78,7 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     } else if (task === "clozeParagraph") {
         req = clozeParagraphPrompt(language);
     }
-    msg.push({ "role": "system", "content": req });
+    if (req) msg.push({ "role": "system", "content": req });
 
     const res = await getOpenAIResponse({
         messages: msg,
@@ -88,7 +88,7 @@ async function getQuestions(input, language = "en-us", task = "MC") {
 
     try {
         let result;
-        if (task === "MC" || task === "TF") {
+        if (task.includes("MC") || task === "TF") {
             result = processQuestions(res.function_call.arguments.result, task);
         } else if (task === "definition") {
             result = processDefinition(res.function_call.arguments.result);

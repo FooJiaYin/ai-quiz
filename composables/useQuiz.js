@@ -29,6 +29,7 @@ export const useQuiz = defineStore('quiz', {
 			diagram: "",
 			language: 'en-us',
 			mainpointsPrompt: '',
+			MCPrompt: '',
 		};
 	},
 	actions: {
@@ -61,9 +62,7 @@ export const useQuiz = defineStore('quiz', {
 			this.transcript = transcript;
 			this.language = language;
 			for (const task of selectedTask) {
-				if (task === 'mainpointsPrompt') {
-					this.mainpoints = '';
-				} else {
+				if (!task.includes('Prompt')) {
 					this[task] = [];
 				}
 			}
@@ -74,11 +73,11 @@ export const useQuiz = defineStore('quiz', {
 				let input = transcript;
 				try {
 					// Pre-process messages
-					if (task === 'mainpointsPrompt') {
-						input = this.messages.mainpoints.slice(0, 2);
+					if (task.includes('Prompt')) {
+						input = this.messages[task.split('Prompt')[0]].slice();
 						input.push({
 							role: 'user',
-							content: this.mainpointsPrompt + "\nRevised output:\n"
+							content: this[task] + "\nRevised output:\n"
 						});
 					}
 
@@ -103,9 +102,9 @@ export const useQuiz = defineStore('quiz', {
 					// Save messages for later tasks
 					this.messages[task] = res.msg;
 
-					if (task === 'mainpointsPrompt') {
-						this.messages.mainpoints[1] = res.msg[res.msg.length - 1];
-						task = 'mainpoints';
+					if (task.includes('Prompt')) {
+						task = task.split('Prompt')[0];
+						this.messages[task][this.messages[task].length - 1] = res.msg[res.msg.length - 1];
 					}
 
 					// Split cloze questions by '___' to render the inline blank
