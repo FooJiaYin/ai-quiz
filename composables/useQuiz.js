@@ -28,12 +28,14 @@ export const useQuiz = defineStore('quiz', {
 			SOP: [],
 			diagram: "",
 			language: 'en-us',
+			mainpointsPrompt: '',
 		};
 	},
 	actions: {
 		async regenerateTask(tasks) {
-			if (!tasks.includes('mainpoints')) {
+			if (tasks.includes('mainpoints')) {
 				this.messages.mainpoints[1].content = this.mainpoints;
+				tasks = tasks.filter(task => task !== 'mainpoints');
 			}
 			this.generateQuiz(this.transcript, this.language, tasks);
 		},
@@ -59,14 +61,27 @@ export const useQuiz = defineStore('quiz', {
 			this.transcript = transcript;
 			this.language = language;
 			for (const task of selectedTask) {
-				this[task] = [];
+				if (task === 'mainpointsPrompt') {
+					this.mainpoints = '';
+				} else {
+					this[task] = [];
+				}
 			}
-			for (const task of selectedTask) {
+
+			for (let task of selectedTask) {
 				this.status = `Generating ${task}...`;
 
 				let input = transcript;
 				try {
 					// Pre-process messages
+					if (task === 'mainpointsPrompt') {
+						input = this.messages.mainpoints.slice(0, 2);
+						input.push({
+							role: 'user',
+							content: this.mainpointsPrompt + "\nRevised output:\n"
+						});
+					}
+
 					if (task === 'MC' || task === 'TF') {
 						input = this.messages.mainpoints;
 						if (input == undefined) throw new Error('Main points not generated');
@@ -86,9 +101,13 @@ export const useQuiz = defineStore('quiz', {
 					});
 
 					// Save messages for later tasks
-					if (task === 'mainpoints' || task === "keywords" || task === 'SOP') {
-						this.messages[task] = res.msg;
+					this.messages[task] = res.msg;
+
+					if (task === 'mainpointsPrompt') {
+						this.messages.mainpoints[1] = res.msg[res.msg.length - 1];
+						task = 'mainpoints';
 					}
+
 					// Split cloze questions by '___' to render the inline blank
 					if (task == 'cloze') {
 						res.result = res.result.map(({ question, answer, difficulty }) => ({

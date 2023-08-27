@@ -3,11 +3,11 @@
     <div>
         <Markdown :src="quiz.mainpoints"></Markdown>
         <v-row justify="center">
-            <v-btn color="primary" class="ma-4">Edit
-                <EditDialog title="Edit mainpoints" v-model="quiz.mainpoints" @save="quiz.regenerateTask(['MC'])" />
+            <v-btn color="primary" class="ma-4">Edit Manually
+                <EditDialog title="Edit mainpoints" v-model="quiz.mainpoints" @save="quiz.regenerateTask(['mainpoints', 'MC'])" />
             </v-btn>
-            <v-btn color="primary" class="ma-4">Prompt
-                <EditDialog title="Prompt" v-model="quiz.mainpointsPrompt" @save="quiz.generateQuiz()" />
+            <v-btn color="primary" class="ma-4">Edit with Prompt
+                <EditDialog title="Prompt" v-model="quiz.mainpointsPrompt" @save="quiz.regenerateTask(['mainpointsPrompt', 'MC'])" />
             </v-btn>
         </v-row>
     </div>

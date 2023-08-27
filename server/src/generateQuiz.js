@@ -10,7 +10,7 @@ import { QGPrompt, clozeParagraphPrompt, clozePrompt, definitionPrompt, diagramP
  * @param {string} task: "MC", "TF", "cloze", "definition", "mainpoints" or "keywords" 
  */
 export async function generateQuiz(input, language = "en-us", task) {
-    if (task === "mainpoints" || task === "keywords" || task === "SOP" || task === "diagram") {
+    if (["mainpoints", "keywords", "SOP", "diagram", "mainpointsPrompt"].includes(task)) {
         return await extractContext(input, language, task);
     } else {
         return await getQuestions(input, language, task);
@@ -44,9 +44,9 @@ async function extractContext(input, language = "en-us", task) {
     } else if (task === "diagram") {
         prompt = diagramPrompt(language, input);
     }
-    let msg = [{ "role": "user", "content": prompt }];
+    let msg = (prompt && [{ "role": "user", "content": prompt }]) ?? input;
     let res = await getOpenAIResponse({
-        messages: msg,
+        messages: msg ?? input,
         ...config
     });
     let result = res.content;
@@ -87,15 +87,18 @@ async function getQuestions(input, language = "en-us", task = "MC") {
     });
 
     try {
+        let result;
         if (task === "MC" || task === "TF") {
-            return processQuestions(res.function_call.arguments.result, task);
+            result = processQuestions(res.function_call.arguments.result, task);
         } else if (task === "definition") {
-            return processDefinition(res.function_call.arguments.result);
+            result = processDefinition(res.function_call.arguments.result);
         } else if (task === "cloze") {
-            return processCloze(res.function_call.arguments.result);
+            result = processCloze(res.function_call.arguments.result);
         } else if (task === "clozeParagraph") {
-            return processClozeParagraph(res.function_call.arguments.result);
+            result = processClozeParagraph(res.function_call.arguments.result);
         }
+        msg.push({ "role": "assistant", "content": JSON.stringify(result.result) });
+        return { ...result, msg };
     } catch (error) {
         error.message = `Error processing response result: ${error.message}`;
         throw error;
