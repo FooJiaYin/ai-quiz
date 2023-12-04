@@ -1,4 +1,4 @@
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 // import { functions } from "./functions";
 import defaultParams from "./config";
 
@@ -6,12 +6,12 @@ const runtimeConfig = useRuntimeConfig();
 const { openaiApiKey, openaiOrgId } = runtimeConfig;
 
 
-const configuration = new Configuration({
+const configuration = {
     organization: openaiOrgId,
     apiKey: openaiApiKey,
-});
+}
 
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI(configuration);
 
 /**
  * A wrapper around the OpenAI API
@@ -32,7 +32,9 @@ export async function getOpenAIResponse({
     }
     let completion;
     try {
-        completion = await openai.createChatCompletion({
+        console.log({ ...defaultParams, ...request, messages: messages }.model)
+        console.log(messages)
+        completion = await openai.chat.completions.create({
             ...defaultParams,
             ...request,
             messages: messages,
@@ -42,23 +44,28 @@ export async function getOpenAIResponse({
         throw error;
     }
 
-    const message = completion.data.choices[0].message;
+    const message = completion.choices[0].message;
     let response = {
         content: message.content,
-        usage: completion.data.usage,
+        usage: completion.usage,
         messages: [...messages, message],
     };
 
-    if (message.function_call) {
+    console.log(message)
+
+    if (message.tool_calls[0].function) {
+        const function_call = message.tool_calls[0].function;
         try {
             response["function_call"] = {
-                ...message.function_call,
-                arguments: JSON.parse(message.function_call.arguments),
+                ...function_call,
+                arguments: JSON.parse(function_call.arguments),
             };
             // response = await handleFunctionCall(response, request);
         } catch (error) {
-            error.message = `Error parsing function call arguments: ${error.message}. The response length may exceeds the max_tokens.`;
-            error.arguments = message.function_call.arguments;
+            error.message = `Error parsing function call arguments: ${error.message}. The response length may exceeds the max_tokens.
+            
+${function_call.arguments}`;
+            error.arguments = function_call.arguments;
             throw error;
         }
     }

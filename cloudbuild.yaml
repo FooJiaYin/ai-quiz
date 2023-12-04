@@ -1,0 +1,10 @@
+steps:
+# Build the container image
+- name: "gcr.io/cloud-builders/docker"
+  args:
+  - build
+  - "--tag=${_DOCKER_IMAGE}"
+  - "--file=./Dockerfile"
+  - .
+images:
+- "${_DOCKER_IMAGE}"

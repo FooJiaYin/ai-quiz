@@ -1,35 +1,60 @@
 import XRegExp from "xregexp";
+import { fuzzySearch } from 'levenshtein-search';
 
 const wordBoundary = "[\\p{Katakana}\\p{Bopomofo}\\p{Hiragana}\\p{Han}\\p{Hangul}\\p{Khmer}\\p{Lao}\\p{Myanmar}\\p{Ogham}\\p{Thai}\\p{Tibetan}\\p{Punctuation}]|\\b|^|$";
+
+function getNearestDist(arr) {
+    if (!arr || arr.length === 0) {
+        return null;
+    }
+
+    let nearestMatch = arr[0];
+
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i].dist < nearestMatch.dist) {
+            nearestMatch = arr[i];
+        }
+    }
+
+    return nearestMatch;
+}
 
 /**
  * Shuffle options and insert answerId
  * @param {[{question, answer, ...}]} questions 
  * @param {string} task 
  */
-export function processQuestions(questions, task) {
+export function processQuestions(questions, type, input) {
     let result = [];
     for (let q of questions) {
-        if (task.includes("MC")) {
-            const { question, answer, options, difficulty } = q;
+        console.log(q);
+        const contextCandidates = [...fuzzySearch(q.context, input, Math.min(Math.floor(q.context.length / 2), 10))];
+        const inputMatch = getNearestDist(contextCandidates);
+        if (type.includes("MC")) {
+            const { question, answer, options, difficulty, context, answerId } = q;
             // Shuffle options
             options.sort(() => Math.random() - 0.5);
             result.push({
-                question, options, difficulty,
-                "answerId": options.indexOf(answer)
+                question, options, context, inputMatch,
+                "type": "MC",
+                "difficulty": difficulty ?? "",
+                "answerId": answerId ?? options.indexOf(answer)
             });
         } else {
-            const { true_statement, false_statement, difficulty } = q;
+            const { true_statement, false_statement, difficulty, context } = q;
             // randomly select true or false, then output {"statement": "string", "answer": "string, True or false"}
             const question = Math.random() < 0.5 ? true_statement : false_statement;
             result.push({
-                question, difficulty,
+                question, difficulty, context, inputMatch,
+                true_statement, false_statement,
+                "type": "TF",
                 "options": ["True", "False"],
                 "answerId": question === true_statement ? 0 : 1,
                 "reason": true_statement
             });
         }
     }
+    console.log(result);
     return { result };
 }
 
@@ -97,7 +122,6 @@ export function processCloze(clozeList) {
 export function processClozeParagraph({ keywords, paragraph }) {
     let answers = [];
     let answersPosition = [];
-    console.log(keywords)
     for (let keyword of keywords) {
         // Replace only the first occurrence
         const pattern = new RegExp(keyword, "i");

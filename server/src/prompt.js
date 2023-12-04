@@ -1,5 +1,3 @@
-import schema from "./schema.js";
-
 const quizDescription = {
     "MC": "the quiz includes one question and 4 answer candidates for each main point above, \
             The first candidate must be the correct answer.",
@@ -158,5 +156,183 @@ graph TD
 <sop>
 ${sop}
 </sop>
-    `
+    `;
+}
+
+export function MCPrompt(language, passage, n, topic) {
+    return `
+You are a quiz creator of highly diagnostic quizzes. You will make good low-stakes tests and diagnostics.
+You will construct ${n} different multiple-choice questions about ${topic} based on the passage, each question should come with 4 answer candidates.
+The audience for the quiz are workers who are asked to strictly follow the SOP, pay attention to the details and cautions.
+these quiz should be answerable with this passage instead of the external knowledge.
+Using only the provided passage and to cite the sentence in the passage used to generate question. Every question must be annotated with a citation. Use the following format for to cite relevant passages ({{"context": …}}). The reference sentences must exactly match substring in the passage, including cases, punctuation and spaces.
+At the end of each quiz, you will provide an answer, the answer must be exactly same with one of the options.
+
+Follow the guidelines when constructing questions:
+- Each questions should be independent and not repetitive
+- Ask only one thing in each questions
+- Use active voice instead of passive voice
+- Avoid giving hints to correct answer in the questions, or mentioning any options
+- Ask more questions about details or concept that the audience may get wrong
+- Avoid questions that can be easily answered with common sense
+
+Follow the guidelines when constructing options:
+- Each options or answer candidate should be independent amd mutually exclusive
+- All options should be plausible, competitive alternate responses to the questions in common sense. The questions can only be answer with the knowledge in the passage.
+- The length of each options should be similar.
+- Make sure that only one of the options / answer candidate is correct according to the passage
+- Sort the options logically. for example: if the options includes numbers, sort them ascendingly.
+- Do not include "None of the above", "All of the above", "I don't know" in the options
+- Do not use certains words like "always", "never", "completely" in the options
+
+Below is the passage:
+=====
+${passage.replace('\n', ' ')}
+=====
+Use language:${language} to generate the quiz
+    `;
+}
+
+export function TFPrompt(language, passage, n, topic) {
+    return `
+You are a quiz creator of highly diagnostic quizzes. You will make good low-stakes tests and diagnostics.
+You will construct ${n} different True or False questions about ${topic} based on the passage, each question should come with 1 true statement and 1 false statement
+The statements must be detailed and specific, provide enough context to make the statement true or false.
+The audience for the quiz are workers who are asked to strictly follow the SOP, pay attention to the details and cautions.
+these quiz should be answerable with this passage instead of the external knowledge.
+Using only the provided passage and to cite the sentence in the passage used to generate question. Every question must be annotated with a citation. Use the following format for to cite relevant passages ({{"context": …}}). The reference sentences must exactly match substring in the passage, including cases, punctuation and spaces.
+At the end of each quiz, you will provide an answer, the answer must be exactly same with one of the options.
+
+Follow the guidelines when constructing questions:
+- Each questions should be independent and not repetitive
+- Ask only one thing in each questions
+- Use active voice instead of passive voice
+- Avoid giving hints to correct answer in the questions, or mentioning any options
+- Ask more questions about details or concept that the audience may get wrong
+- Avoid questions that can be easily answered with common sense
+
+Follow the guidelines when constructing true and false statements:
+- Each true and false statements should be independent amd mutually exclusive
+- All statements should be plausible, competitive alternate responses to the questions in common sense. The questions can only be answer with the knowledge in the passage.
+- The length of each statements should be similar.
+- Make sure that only one of the statements is true according to the passage
+- Do not directly write the false statement as the negation of the true statement, for example: 
+    true_statement: "The sky is blue",
+    false_statement: "The sky is red" (instead of "The sky is not blue")
+
+Below is the passage:
+=====
+${passage.replace('\n', ' ')}
+=====
+Use language:${language} to generate the quiz
+    `;
+}
+
+export function editPrompt(task, topic, passage) {
+    switch (task) {
+        case "Add":
+            return `Besides the questions above, generate 1 ~ 5 more questions about ${topic}.
+these questions should be answerable with this passage instead of the external knowledge. Use only facts that are mentioned in the passage.
+Follow the guidelines given above when constructing questions and options. 
+Output 1 ~ 5 new questions only, do not repeat questions that are already in the quiz.`;
+
+        case "Selection":
+        return `Add 1 ~ 2 more question about ${topic} based on the passage below:
+'''
+${passage}
+'''
+these questions should be answerable with this passage instead of the external knowledge. Use only facts that are mentioned in the passage.
+Follow the guidelines given above when constructing questions and options. Do not repeat questions that are already in the quiz.`;
+
+        case "Enhance":
+            return `Enhance the question above to follow the guidelines:
+- The question and the options should be relevant and correct according to the passage
+- Each questions should be independent and not repetitive
+- Ask only one thing in each questions
+- Use active voice instead of passive voice
+- Avoid giving hints to correct answer in the questions, or mentioning any options
+- Ask more questions about details or concept that the audience may get wrong
+- Avoid questions that can be easily answered with common sense
+
+Use the same language as the question above to generate the quiz`;
+
+        case "Expand":
+            return `This question is not concise enough. Find relevant procedures to the question from the passage, then expand the question above to include more relevant context and necessary details to make the question more concise and clear
+For example:
+- INPUT: "question: How long should we wait?"
+Relevant procedures: "Put the cake in the oven and bake it. Wait for 30 minutes. Take out the cake."
+OUTPUT: "question: How long should we wait for the cake to bake?"
+- INPUT: "question: What is the color?"
+Relevant procedures: "Put the powder into the mixture. The color of the mixture changes to red."
+OUTPUT: "question: What is the color of the mixture after putting the powder into the mixture?"
+
+The output question should be longer than the input question and contain more details and context.
+`;
+
+        case "Shorten":
+            return `Simplify and shorten the question above to make them more concise and easier to understand`;
+
+        case "Topic":
+            return `Find related context to the question, then ask a question about ${topic} based on same passage as the question above`;
+
+        case "Regenerate options":
+            return `Generate 4 options for the question above.
+Follow the guidelines:
+- The answer should be relevant and correct according to the passage
+- Each options or answer candidate should be independent amd mutually exclusive
+- All options should be plausible, competitive alternate responses to the questions in common sense. The questions can only be answer with the knowledge in the passage.
+- The length of each options should be similar.
+- Make sure that only one of the options / answer candidate is correct according to the passage
+- Sort the options logically. for example: if the options includes numbers, sort them ascendingly.
+- Do not include "None of the above", "All of the above", "I don't know" in the options
+- Do not use certains words like "always", "never", "completely" in the options
+- One of the options must be the correct answer, the answerId should be the index of the correct answer, one of 0, 1, 2, 3`;
+
+        case "Regenerate":
+            return `Rewrite another true statement and another false statement for the same context of the question above. Follow the guidelines:
+- Each true and false statements should be independent amd mutually exclusive
+- All statements should be plausible, competitive alternate responses to the questions in common sense. The questions can only be answer with the knowledge in the passage.
+- Make sure that only one of the statements is true according to the passage
+- Do not directly write the false statement as the negation of the true statement, for example:
+    true_statement: "The sky is blue",
+    false_statement: "The sky is red" (instead of "The sky is not blue")`;
+
+        case "Ask differently":
+            return `Ask the same question in a different way by switching the subject of question and the answer
+for example:
+- INPUT: "question: What is John's favorite food? answer: Pizza" 
+OUTPUT: "question: Who is a fan of pizza? answer: John"
+- INPUT: "question: How to become healthy? answer: Exercise regularly" 
+OUTPUT: "question: Why exercise regularly? answer: To become healthy"
+- INPUT: "question: What is the capital of France? answer: Paris" 
+OUTPUT: "question: Paris is the capital of which country? answer: France"
+- INPUT: "question: Why exercise regularly? answer: To become healthy" 
+OUTPUT: "question: How to become healthy? answer: Exercise regularly"
+- INPUT: "question: Why do we need to wear a mask? answer: To prevent the spread of COVID-19" 
+OUTPUT: "question: How to prevent the spread of COVID-19? answer: Wear a mask"
+- INPUT: "question: What to do next after analyzing the data? answer: write a report" 
+OUTPUT: "question: What to do before writing a report? answer: Analyze the data"`;
+
+        case "Why <-> How":
+            return `Change the question above from "Why" to "How" or from "How" to "Why"
+for example:
+- "question: How to become healthy? answer: Exercise regularly" 
+OUTPUT: "question: Why exercise regularly? answer: To become healthy"
+- "question: Why exercise regularly? answer: To become healthy" 
+OUTPUT: "question: How to become healthy? answer: Exercise regularly"
+- "question: Why do we need to wear a mask? answer: To prevent the spread of COVID-19" 
+OUTPUT: "question: How to prevent the spread of COVID-19? answer: Wear a mask"
+- "question: How to prevent the spread of COVID-19? answer: Wear a mask" 
+OUTPUT: "question: Why do we need to wear a mask? answer: To prevent the spread of COVID-19"`;
+
+        case "Before <-> After":
+            return `Change the question above from "Before" to "After" or from "After" to "Before"
+for example:
+- "question: What to do next after analyzing the data? answer: write a report" 
+OUTPUT: "question: What to do before writing a report? answer: Analyze the data"
+- "question: What to do before writing a report? answer: Analyze the data" 
+OUTPUT: "question: What to do next after analyzing the data? answer: write a report"
+- INPUT: "What should be done before adding the eggs? answer: Heat the pan"
+OUTPUT: "What should be done after heating the pan? answer: Add the eggs"`;
+    }
 }

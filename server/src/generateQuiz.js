@@ -1,7 +1,8 @@
 import { getFunctions } from "./functions.js";
 import { getOpenAIResponse } from "./openai";
+import defaultParams from "./config.js";
 import { processCloze, processClozeParagraph, processDefinition, processDiagram, processQuestions, processSOP } from "./postprocess.js";
-import { QGPrompt, clozeParagraphPrompt, clozePrompt, definitionPrompt, diagramPrompt, keywordsPrompt, mainpointsPrompt, sopPrompt } from "./prompt.js";
+import { MCPrompt, QGPrompt, TFPrompt, clozeParagraphPrompt, clozePrompt, definitionPrompt, diagramPrompt, editPrompt, keywordsPrompt, mainpointsPrompt, sopPrompt } from "./prompt.js";
 
 /**
  * Generate a quiz from a passage for given task
@@ -9,11 +10,18 @@ import { QGPrompt, clozeParagraphPrompt, clozePrompt, definitionPrompt, diagramP
  * @param {string} language 
  * @param {string} task: "MC", "TF", "cloze", "definition", "mainpoints" or "keywords" 
  */
-export async function generateQuiz(input, language = "en-us", task) {
-    if (["mainpoints", "keywords", "SOP", "diagram", "mainpointsPrompt"].includes(task)) {
-        return await extractContext(input, language, task);
+export async function generateQuiz({ type, task, ...props }) {
+    // if (["mainpoints", "keywords", "SOP", "diagram", "mainpointsPrompt"].includes(task)) {
+    //     return await extractContext(input, language, task);
+    // } else {
+    //     return await getQuestions(input, language, task);
+    // }
+    if (task == "MC" || task == "TF") {
+        const { input, language, n, topic } = props;
+        return await generateQuestions(type, input, language, n, topic);
     } else {
-        return await getQuestions(input, language, task);
+        const { msg, input, topic } = props;
+        return await editQuestion(type, msg, input, task, topic);
     }
 }
 
@@ -62,42 +70,91 @@ async function extractContext(input, language = "en-us", task) {
  * @param {string} language 
  * @param {string} task: "MC", "TF", "cloze" or "definition"
  */
-async function getQuestions(input, language = "en-us", task = "MC") {
-    // Get questions
-    let msg = input;
-    const callbackFunction = getFunctions(task.split("Prompt")[0]);
+// async function getQuestions(input, language = "en-us", task = "MC") {
+//     // Get questions
+//     let msg = input;
+//     const callbackFunction = getFunctions(task.split("Prompt")[0]);
 
-    // Get prompt
-    let req;
-    if (task === "MC" || task === "TF") {
-        req = QGPrompt(language, task);
-    } else if (task === "definition") {
-        req = definitionPrompt(language);
-    } else if (task === "cloze") {
-        req = clozePrompt(language);
-    } else if (task === "clozeParagraph") {
-        req = clozeParagraphPrompt(language);
+//     // Get prompt
+//     let prompt;
+//     if (task === "MC") {
+//         msg = [];
+//         prompt = MCPrompt(language, input, 10);
+//     } else if (task === "MC" || task === "TF") {
+//         prompt = QGPrompt(language, task);
+//     } else if (task === "definition") {
+//         prompt = definitionPrompt(language);
+//     } else if (task === "cloze") {
+//         prompt = clozePrompt(language);
+//     } else if (task === "clozeParagraph") {
+//         prompt = clozeParagraphPrompt(language);
+//     }
+//     if (prompt) msg.push({ "role": "system", "content": prompt });
+
+//     const res = await getOpenAIResponse({
+//         messages: msg,
+//         functions: [callbackFunction],
+//         function_call: { "name": callbackFunction["name"] },
+//     });
+
+//     try {
+//         let result;
+//         if (task.includes("MC") || task === "TF") {
+//             result = processQuestions(res.function_call.arguments.result, task);
+//         } else if (task === "definition") {
+//             result = processDefinition(res.function_call.arguments.result);
+//         } else if (task === "cloze") {
+//             result = processCloze(res.function_call.arguments.result);
+//         } else if (task === "clozeParagraph") {
+//             result = processClozeParagraph(res.function_call.arguments.result);
+//         }
+//         msg.push({ "role": "assistant", "content": JSON.stringify(result.result) });
+//         return { ...result, msg };
+//     } catch (error) {
+//         error.message = `Error processing response result: ${error.message}`;
+//         throw error;
+//     }
+// }
+
+async function generateQuestions(type, input, language = "en-us", n, topic) {
+    // const prompt = MCPrompt(language, input, n, topic);
+    let prompt = "";
+    if (type == "MC") {
+        prompt = MCPrompt(language, input, n, topic);
+    } else if (type == "TF") {
+        prompt = TFPrompt(language, input, n, topic);
     }
-    if (req) msg.push({ "role": "system", "content": req });
+    const msg = [{ "role": "system", "content": prompt }];
+    console.log(msg);
 
+    return await getQuestions(type, msg, input, "gpt-3.5-turbo-16k");
+}
+
+async function editQuestion(type, msg, input, task, topic) {
+    msg[0].content.replace("10 different", "1");
+    const prompt = editPrompt(task, topic, task == "Selection" ? input : "");
+    msg.push({ "role": "user", "content": prompt });
+    console.log(msg);
+
+    return await getQuestions(type, msg, input, "gpt-3.5-turbo-16k");
+}
+
+async function getQuestions(type, msg, input, model = defaultParams.model) {
+    const callbackFunction = getFunctions(type);
     const res = await getOpenAIResponse({
+        model: model,
         messages: msg,
-        functions: [callbackFunction],
-        function_call: { "name": callbackFunction["name"] },
+        tools: [{
+            type: "function",
+            function: callbackFunction,
+        }],
+        tool_choice: { type: "function", function: { name: callbackFunction["name"] } }
     });
 
     try {
-        let result;
-        if (task.includes("MC") || task === "TF") {
-            result = processQuestions(res.function_call.arguments.result, task);
-        } else if (task === "definition") {
-            result = processDefinition(res.function_call.arguments.result);
-        } else if (task === "cloze") {
-            result = processCloze(res.function_call.arguments.result);
-        } else if (task === "clozeParagraph") {
-            result = processClozeParagraph(res.function_call.arguments.result);
-        }
+        let result = processQuestions(res.function_call.arguments.result, type, input);
         msg.push({ "role": "assistant", "content": JSON.stringify(result.result) });
+        // console.log(result.result)
         return { ...result, msg };
     } catch (error) {
         error.message = `Error processing response result: ${error.message}`;

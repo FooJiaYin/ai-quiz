@@ -1,5 +1,5 @@
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
-import vuetify from 'vite-plugin-vuetify'
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
 	devtools: { enabled: true },
@@ -10,7 +10,7 @@ export default defineNuxtConfig({
 		'@pinia/nuxt',
 		async (options, nuxt) => {
 			nuxt.hooks.hook('vite:extendConfig', config => config.plugins.push(
-				vuetify()
+				vuetify({ autoImport: true })
 			))
 		},
 	],
@@ -22,5 +22,12 @@ export default defineNuxtConfig({
 		public: {
 			// apiBase: '/api'
 		}
-	}
+	},
+	vite: {
+		vue: {
+			template: {
+				transformAssetUrls,
+			},
+		},
+	},
 })

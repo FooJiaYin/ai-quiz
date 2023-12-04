@@ -19,12 +19,16 @@ export default {
         "type": "string",
         "description": "the correct answer, must be one of the options",
       },
+      "context": {
+        "type": "string",
+        "description": "Part of the passage that contains all sentences that is used to generate the question. Must be exactly match the substring of the passage. "
+      },
       "difficulty": {
         "type": "string",
         "description": "the difficulty of the question in english, must be one of Easy, Medium, Hard",
       },
     },
-    "required": ["question", "options", "answer", "difficulty"]
+    "required": ["question", "options", "answer", "difficulty", "context"]
   },
   "TF": {
     "type": "object",
@@ -35,12 +39,16 @@ export default {
       "false_statement": {
         "type": "string"
       },
+      "context": {
+        "type": "string",
+        "description": "Part of the passage that contains all sentences that is used to generate the question. Must be exactly match the substring of the passage. "
+      },
       "difficulty": {
         "type": "string",
         "description": "the difficulty to distinguish the true and false statement in english, must be one of Easy, Medium, Hard",
       },
     },
-    "required": ["true_statement", "false_statement", "difficulty"],
+    "required": ["true_statement", "false_statement", "context", "difficulty"],
   },
   "definition": {
     "type": "object",

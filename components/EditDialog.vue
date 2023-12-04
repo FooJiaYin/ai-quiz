@@ -3,8 +3,10 @@
         <v-card>
             <v-card-title>{{ title }}</v-card-title>
             <v-card-text>
-                <v-textarea v-model="value" variant="outlined"></v-textarea>
-                <CenterButton @click="onSave()">Save</CenterButton>
+                <v-textarea v-model="value" variant="outlined" @change="emit('update:modelValue', value)"></v-textarea>
+                <slot>
+                    <CenterButton @click="onSave()">Save</CenterButton>
+                </slot>
             </v-card-text>
         </v-card>
     </v-dialog>
@@ -18,7 +20,7 @@ const isOpen = ref(false);
 
 function onSave() {
     isOpen.value = false;
-    emit('update:modelValue', value.value)
+    emit('update:modelValue', value.value);
     emit('save', value.value);
 }
 </script>

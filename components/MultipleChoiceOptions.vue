@@ -28,8 +28,8 @@ function reset() {
 }
 
 function isSelected(index) {
-    if (selectedOption.value === index) return index === props.q.answerId ? "bg-success" : "bg-error";
-    else if (selectedOption.value != null && index === props.q.answerId) return "text-success font-weight-bold";
+    // if (selectedOption.value === index) return index === props.q.answerId ? "bg-success" : "bg-error";
+    if (index === props.q.answerId) return "text-success font-weight-bold";
     else return "";
 }
 

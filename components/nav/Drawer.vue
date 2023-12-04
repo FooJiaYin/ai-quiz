@@ -1,7 +1,7 @@
 <template>
     <v-navigation-drawer class="bg-indigo-darken-1" permanent theme="dark">
         <v-list nav>
-            <NavLink link="/" title="+ Add Quiz"></NavLink>
+            <NavLink link="/" title="> Input"></NavLink>
             <NavLink v-if="quiz['mainpoints'].length > 0" link="/mainpoints" title="Main Points"></NavLink>
             <NavLink v-if="quiz['MC'].length > 0" link="/multiple-choice" title="Multiple Choice Quiz"></NavLink>
             <NavLink v-if="quiz['TF'].length > 0" link="/true-false" title="True/False Quiz"></NavLink>
